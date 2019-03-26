@@ -11,5 +11,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/editText4"
+            android:layout_width="286dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="현재위치" />
+
+        <EditText
+            android:id="@+id/editText3"
+            android:layout_width="284dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="목적지" />
+
     </LinearLayout>
 </android.widget.LinearLayout>
