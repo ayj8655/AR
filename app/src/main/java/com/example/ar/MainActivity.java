@@ -65,20 +65,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         // 맵박스 사용하기 위한 접근 토큰 지정
         Mapbox.getInstance(this, getString(R.string.access_token));
-
-
         // 아래 함수로 통해 목적지 주소값을 위도 경도 값으로 변경
         getPointFromGeoCoder("충청남도 천안시 동남구 단대로 119");
-
-        // 내 gps 위치 (임의지정)
+        // 사용자 현재 gps 위치
         final Point origin = Point.fromLngLat(127.17937, 36.833038);
-
         // 도착지 gps 위치
         final Point destination = Point.fromLngLat(destinationX, destinationY);
-
-
         // Setup the MapView
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
@@ -86,26 +81,23 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onMapReady(MapboxMap mapboxMap) {
                 map = mapboxMap;
-
                 // 카메라 위치 고정(내 gps 위치로 임의지정)
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(
                         // 카메라는 반대의 값으로 적어줄 것
                         // 뒤에 숫자 15은 카메라 확대 배수이다( 15가 적당 )
-                        new LatLng(36.833038, 127.17937), 14));
-
+                        new LatLng(36.833038, 127.17937), 12));
                 // Add origin and destination to the map
                 mapboxMap.addMarker(new MarkerOptions()
                         .position(new LatLng(origin.latitude(), origin.longitude()))
                         // 타이틀은 상호명 건물명, snippet은 설명 그에 대한 설명이다
                         // 출발지
-                        .title("소우")
+                        //.title("소우")
                         .snippet("출발지"));
                 mapboxMap.addMarker(new MarkerOptions()
                         // 목적지
                         .position(new LatLng(destination.latitude(), destination.longitude()))
-                        .title("가비")
+                        //.title("가비")
                         .snippet("도착지"));
-
                 // Get route from API
                 getRoute(origin, destination);
             }
