@@ -1,32 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.widget.LinearLayout
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    xmlns:mapbox="http://schemas.android.com/apk/res-auto"
+    tools:context=".MainActivity">
+        <com.mapbox.mapboxsdk.maps.MapView
 
-    <LinearLayout
-        android:id="@+id/linearLayoutTmap"
+        android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        mapbox:mapbox_styleUrl="@string/mapbox_style_light"
+        mapbox:mapbox_cameraTilt="0" />
 
-        <EditText
-            android:id="@+id/editText4"
-            android:layout_width="286dp"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text="현재위치" />
-
-        <EditText
-            android:id="@+id/editText3"
-            android:layout_width="284dp"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text="목적지" />
-
-    </LinearLayout>
-</android.widget.LinearLayout>
+    </android.support.constraint.ConstraintLayout>

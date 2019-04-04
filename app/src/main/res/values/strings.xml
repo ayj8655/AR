@@ -3,4 +3,6 @@
     <string name="Kakao_button">카카오</string>
     <string name="Facebook_button">페이스북</string>
     <string name="Naver_button">네이버</string>
+    <string name="access_token">pk.eyJ1IjoibWlua3lvdW5nIiwiYSI6ImNqdHpuMjJhdzBpenI0ZG1nMDluNXJwOW0ifQ.74VW-6-ZHTu1J5XhfOUy6Q</string>
+
 </resources>

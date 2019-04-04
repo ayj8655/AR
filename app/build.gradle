@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.example.ar"
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -25,5 +25,9 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation files('libs/com.skt.Tmap_1.59.jar')
+
+    implementation 'com.mapbox.mapboxsdk:mapbox-sdk-services:3.1.0'
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:6.1.3'
+
+
 }
