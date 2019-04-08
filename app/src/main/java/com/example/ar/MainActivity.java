@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     // GPSTracker class
     private GpsInfo gps;
 
-
+//288
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
