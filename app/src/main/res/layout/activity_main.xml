@@ -11,9 +11,37 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="Button"
+        android:onClick="newmap"
+        android:text="내 위치"
         mapbox:layout_constraintBottom_toBottomOf="parent"
         mapbox:layout_constraintEnd_toEndOf="@+id/mapView" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="right"
+        android:onClick="map_search"
+        android:text="검색"
+        mapbox:layout_constraintBottom_toTopOf="@+id/mapView"
+        mapbox:layout_constraintEnd_toEndOf="parent"
+        mapbox:layout_constraintStart_toEndOf="@+id/editText11"
+        mapbox:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editText11"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="11dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="목적지를 입력하세요"
+        mapbox:layout_constraintEnd_toStartOf="@+id/button3"
+        mapbox:layout_constraintStart_toStartOf="parent"
+        mapbox:layout_constraintTop_toTopOf="parent" />
 
     <com.mapbox.mapboxsdk.maps.MapView
 
@@ -22,8 +50,10 @@
         android:layout_height="0dp"
         mapbox:layout_constraintBottom_toBottomOf="parent"
         mapbox:layout_constraintEnd_toEndOf="parent"
+        mapbox:layout_constraintHorizontal_bias="0.0"
         mapbox:layout_constraintStart_toStartOf="parent"
-        mapbox:layout_constraintTop_toTopOf="parent"
+        mapbox:layout_constraintTop_toBottomOf="@+id/button3"
+        mapbox:layout_constraintVertical_bias="1.0"
         mapbox:mapbox_cameraTilt="0"
         mapbox:mapbox_styleUrl="@string/mapbox_style_light">
 
