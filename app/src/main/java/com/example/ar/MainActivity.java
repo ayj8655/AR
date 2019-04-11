@@ -104,13 +104,13 @@ public class MainActivity extends AppCompatActivity {
                         // 카메라는 반대의 값으로 적어줄 것
                         // 뒤에 숫자 15은 카메라 확대 배수이다( 15가 적당 )
                         new LatLng(latitude, longitude), 12));
-                // Add origin and destination to the map
-                mapboxMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(origin.latitude(), origin.longitude()))
-                        // 타이틀은 상호명 건물명, snippet은 설명 그에 대한 설명이다
-                        // 출발지
-                        //.title("소우")
-                        .snippet("현재 위치"));
+//                // Add origin and destination to the map
+//                mapboxMap.addMarker(new MarkerOptions()
+//                        .position(new LatLng(origin.latitude(), origin.longitude()))
+//                        // 타이틀은 상호명 건물명, snippet은 설명 그에 대한 설명이다
+//                        // 출발지
+//                        //.title("소우")
+//                        .snippet("현재 위치"));
             }
         });
     }
@@ -243,6 +243,23 @@ public class MainActivity extends AppCompatActivity {
         getPointFromGeoCoder(editText.getText().toString());
         final Point origin = Point.fromLngLat(longitude, latitude);
         final Point destination = Point.fromLngLat(destinationX, destinationY);
-        getRoute(origin,destination);
+
+        map.clear();//마커 및 폴리라인 모두 지우기
+
+        getRoute(origin,destination);//폴리라인 그리기
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(//카메라 위치 지정
+                // 카메라는 반대의 값으로 적어줄 것
+                // 뒤에 숫자 15은 카메라 확대 배수이다( 15가 적당 )
+                new LatLng(destination.latitude(), destination.longitude()), 12));
+        map.addMarker(new MarkerOptions()//마커 추가
+                        .position(new LatLng(origin.latitude(), origin.longitude()))
+                        //.title("소우")
+                        .snippet("현재 위치"));
+        map.addMarker(new MarkerOptions()//마커 추가
+                .position(new LatLng(destination.latitude(), destination.longitude()))
+                //.title("소우")
+                .snippet("도착지"));
+
+
     }
 }

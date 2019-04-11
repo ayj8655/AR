@@ -37,8 +37,9 @@
         android:layout_marginTop="2dp"
         android:layout_marginEnd="11dp"
         android:ems="10"
-        android:inputType="textPersonName"
         android:hint="목적지를 입력하세요"
+        android:inputType="textPersonName"
+        android:text="천안역"
         mapbox:layout_constraintEnd_toStartOf="@+id/button3"
         mapbox:layout_constraintStart_toStartOf="parent"
         mapbox:layout_constraintTop_toTopOf="parent" />
