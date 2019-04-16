@@ -12,6 +12,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,6 +25,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mapbox.android.core.location.LocationEngine;
+import com.mapbox.android.core.location.LocationEngineListener;
+import com.mapbox.android.core.location.LocationEnginePriority;
+import com.mapbox.android.core.location.LocationEngineProvider;
+import com.mapbox.android.core.permissions.PermissionsListener;
+import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.api.directions.v5.DirectionsCriteria;
 import com.mapbox.api.directions.v5.MapboxDirections;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
@@ -39,6 +46,9 @@ import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
+import com.mapbox.mapboxsdk.plugins.locationlayer.modes.CameraMode;
+import com.mapbox.mapboxsdk.plugins.locationlayer.modes.RenderMode;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -55,13 +65,19 @@ import static com.mapbox.core.constants.Constants.PRECISION_6;
 //현재 지도
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, LocationEngineListener, PermissionsListener {
     // private MapView mapView;
     private static final String TAG = "DirectionsActivity";
     private MapView mapView;
     private MapboxMap map;
     private DirectionsRoute currentRoute;
     private MapboxDirections client;
+    private PermissionsManager permissionsManager;
+    private LocationEngine locationEngine;
+    private LocationLayerPlugin locationLayerPlugin;
+    private Location originLocation;
+
+
     Double latitude;
     Double longitude;
     EditText editText;
@@ -76,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Mapbox.getInstance(this, getString(R.string.access_token));
         setContentView(R.layout.activity_main);
 
         Intent intent = getIntent();
@@ -85,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
         editText =(EditText)findViewById(R.id.editText11);
 
         // 맵박스 사용하기 위한 접근 토큰 지정
-        Mapbox.getInstance(this, getString(R.string.access_token));
+
         // 아래 함수로 통해 목적지 주소값을 위도 경도 값으로 변경
    //     getPointFromGeoCoder("null");
         // 사용자 현재 gps 위치
@@ -95,25 +112,89 @@ public class MainActivity extends AppCompatActivity {
         // Setup the MapView
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(MapboxMap mapboxMap) {
-                map = mapboxMap;
-                // 카메라 위치 고정(내 gps 위치로 임의지정)
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                        // 카메라는 반대의 값으로 적어줄 것
-                        // 뒤에 숫자 15은 카메라 확대 배수이다( 15가 적당 )
-                        new LatLng(latitude, longitude), 12));
-//                // Add origin and destination to the map
-//                mapboxMap.addMarker(new MarkerOptions()
-//                        .position(new LatLng(origin.latitude(), origin.longitude()))
-//                        // 타이틀은 상호명 건물명, snippet은 설명 그에 대한 설명이다
-//                        // 출발지
-//                        //.title("소우")
-//                        .snippet("현재 위치"));
-            }
-        });
+        mapView.getMapAsync(this);
     }
+
+    @Override
+    @SuppressWarnings("MissingPermission")
+    public void onConnected() {
+        locationEngine.requestLocationUpdates();
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        if(location != null){
+            originLocation = location;
+            setCameraPostion(location);
+        }
+    }
+
+    @Override
+    public void onExplanationNeeded(List<String> permissionsToExplain) {
+
+    }
+
+    @Override
+    public void onPermissionResult(boolean granted) {
+        if (granted) {
+            enableLocation();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        permissionsManager.onRequestPermissionsResult(requestCode,permissions,grantResults);
+    }
+
+
+    @SuppressWarnings("MissingPermission")
+    private  void initializeLocationEngine() {
+        locationEngine = new LocationEngineProvider(this).obtainBestLocationEngineAvailable();
+        locationEngine.setPriority(LocationEnginePriority.HIGH_ACCURACY);
+        locationEngine.activate();
+
+        Location lastLocation = locationEngine.getLastLocation();
+        if (lastLocation != null) {
+            originLocation = lastLocation;
+            setCameraPostion(lastLocation);
+        } else {
+            locationEngine.addLocationEngineListener(this);
+        }
+
+
+
+    }
+    @SuppressWarnings("MissingPermission")
+    private void  initializeLocationLayer() {
+        locationLayerPlugin = new LocationLayerPlugin(mapView,map,locationEngine);
+        locationLayerPlugin.setLocationLayerEnabled(true);
+        locationLayerPlugin.setCameraMode(CameraMode.TRACKING_COMPASS);
+        locationLayerPlugin.setRenderMode(RenderMode.COMPASS);
+    }
+
+
+    private void setCameraPostion(Location location) {
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()),13.0));
+    }
+
+
+    @Override
+    public void onMapReady(MapboxMap mapboxMap) {
+        map = mapboxMap;
+        enableLocation();
+    }
+    private void enableLocation() {
+        if (PermissionsManager.areLocationPermissionsGranted(this)) {
+            initializeLocationEngine();
+            initializeLocationLayer();
+        } else {
+            permissionsManager = new PermissionsManager(this);
+            permissionsManager.requestLocationPermissions(this);
+        }
+    }
+
+
+
     private void getRoute(Point origin, Point destination) {
 
         client = MapboxDirections.builder()
