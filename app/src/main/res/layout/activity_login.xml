@@ -78,4 +78,16 @@
         android:text="회원가입"
         app:layout_constraintBaseline_toBaselineOf="@+id/Login_button"
         app:layout_constraintEnd_toEndOf="@+id/editText2" />
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="66dp"
+        android:onClick="facebook_OnClick"
+        app:layout_constraintBottom_toTopOf="@+id/editText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </android.support.constraint.ConstraintLayout>
