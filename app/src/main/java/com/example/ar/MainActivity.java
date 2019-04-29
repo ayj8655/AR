@@ -274,12 +274,27 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onStart() {
         super.onStart();
+        if (locationEngine != null) {
+            locationEngine.requestLocationUpdates();
+        }
+        if (locationLayerPlugin != null) {
+            locationLayerPlugin.onStart();
+        }
         mapView.onStart();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+
+        if (locationEngine != null) {
+            locationEngine.requestLocationUpdates();
+        }
+        if (locationLayerPlugin != null) {
+            locationLayerPlugin.onStop();
+        }
+
+
         mapView.onStop();
     }
 
@@ -302,6 +317,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (client != null) {
             client.cancelCall();
         }
+        if (locationEngine != null) {
+            locationEngine.deactivate();
+        }
+
         mapView.onDestroy();
     }
 
