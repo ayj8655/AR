@@ -7,7 +7,7 @@
     tools:context=".LoginActivity">
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/etUserName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="196dp"
@@ -19,14 +19,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/etPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
         android:ems="10"
         android:inputType="textPassword"
-        app:layout_constraintStart_toStartOf="@+id/editText"
-        app:layout_constraintTop_toBottomOf="@+id/editText" />
+        app:layout_constraintStart_toStartOf="@+id/etUserName"
+        app:layout_constraintTop_toBottomOf="@+id/etUserName" />
 
     <Button
         android:id="@+id/Kakao_button"
@@ -66,8 +66,8 @@
         android:layout_marginTop="27dp"
         android:onClick="Login_onClick"
         android:text="로그인"
-        app:layout_constraintStart_toStartOf="@+id/editText2"
-        app:layout_constraintTop_toBottomOf="@+id/editText2" />
+        app:layout_constraintStart_toStartOf="@+id/etPassword"
+        app:layout_constraintTop_toBottomOf="@+id/etPassword" />
 
     <Button
         android:id="@+id/Signup_button"
@@ -77,7 +77,7 @@
         android:onClick="Signup_onClick"
         android:text="회원가입"
         app:layout_constraintBaseline_toBaselineOf="@+id/Login_button"
-        app:layout_constraintEnd_toEndOf="@+id/editText2" />
+        app:layout_constraintEnd_toEndOf="@+id/etPassword" />
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/login_button"
@@ -86,7 +86,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="66dp"
         android:onClick="facebook_OnClick"
-        app:layout_constraintBottom_toTopOf="@+id/editText"
+        app:layout_constraintBottom_toTopOf="@+id/etUserName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

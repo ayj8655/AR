@@ -13,6 +13,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -35,6 +36,9 @@ import java.util.Arrays;
 //로그인
 public class LoginActivity extends AppCompatActivity {
 
+    //login
+    EditText UsernameEt, PasswordEt;
+
     // facebook
     CallbackManager callbackManager;
 
@@ -53,10 +57,17 @@ public class LoginActivity extends AppCompatActivity {
     double latitude;
     double longitude;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        //login
+        UsernameEt = (EditText)findViewById(R.id.etUserName);
+        PasswordEt = (EditText)findViewById(R.id.etPassword);
+        //.login
 
         // facebook
         printKeyHash();
@@ -121,6 +132,7 @@ public class LoginActivity extends AppCompatActivity {
         // mapbox
         btnShowLocation = (Button) findViewById(R.id.Login_button);
 
+        /*
         btnShowLocation.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
                 // 권한 요청을 해야 함
@@ -146,15 +158,21 @@ public class LoginActivity extends AppCompatActivity {
                 intent.putExtra("위도", latitude);
                 intent.putExtra("경도", longitude);
                 startActivity(intent);
-/*
+
+
+
+
                 Intent intent = getIntent();
                 Double latitude = intent.getExtras().getDouble("위도");
                 Double longitude= intent.getExtras().getDouble("경도");
 
-*/
+
 
             }
-        });
+        }
+        );
+        */
+
         callPermission();  // 권한 요청을 해야 함
         // .mapbox
     }
@@ -187,8 +205,11 @@ public class LoginActivity extends AppCompatActivity {
     // .facebook
 
     public void Login_onClick(View v){  //온클릭으로 인텐트
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
+        String username = UsernameEt.getText().toString();
+        String password = PasswordEt.getText().toString();
+        String type = "login";
+        BackgroundWorker backgroundWorker = new BackgroundWorker(this);
+        backgroundWorker.execute(type, username, password);
     }
 
 
@@ -240,5 +261,6 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
     // .mapbox
+
 
 }
