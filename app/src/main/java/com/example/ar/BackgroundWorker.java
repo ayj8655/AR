@@ -3,6 +3,7 @@ package com.example.ar;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -19,40 +20,85 @@ import java.net.URLEncoder;
 public class BackgroundWorker extends AsyncTask<String,Void,String> {
     Context context;
     AlertDialog alertDialog;
-    BackgroundWorker(Context ctx) {
+    BackgroundWorker (Context ctx) {
         context = ctx;
     }
     @Override
     protected String doInBackground(String... params) {
         String type = params[0];
-        // String login_url = "http://localhost:80/login.php";
         if(type.equals("login")) {
             try {
-                String user_name = params[1];
+                String user_id = params[1];
                 String password = params[2];
-                URL url = new URL("http", "192.168.56.1", 80, "login.php");
-                HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
+                URL url = new URL("http", "10.0.2.2", 80, "login.php");
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                 httpURLConnection.setRequestMethod("POST");
                 httpURLConnection.setDoOutput(true);
                 httpURLConnection.setDoInput(true);
                 OutputStream outputStream = httpURLConnection.getOutputStream();
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-                String post_data = URLEncoder.encode("user_name","UTF-8")+"="+URLEncoder.encode(user_name,"UTF-8")+"&"
-                        +URLEncoder.encode("password","UTF-8")+"="+URLEncoder.encode(password,"UTF-8");
+                String post_data = URLEncoder.encode("user_id", "UTF-8") + "=" + URLEncoder.encode(user_id, "UTF-8") + "&"
+                        + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(password, "UTF-8");
                 bufferedWriter.write(post_data);
                 bufferedWriter.flush();
                 bufferedWriter.close();
                 outputStream.close();
                 InputStream inputStream = httpURLConnection.getInputStream();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream,"iso-8859-1"));
-                String result="";
-                String line="";
-                while((line = bufferedReader.readLine())!= null) {
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+                String result = "";
+                String line = "";
+                while ((line = bufferedReader.readLine()) != null) {
                     result += line;
                 }
                 bufferedReader.close();
                 inputStream.close();
                 httpURLConnection.disconnect();
+
+                return result;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else if(type.equals("register")){
+            try {
+                String id = params[1];
+                String password = params[2];
+                String password2 = params[3];
+                String name = params[4];
+                String email = params[5];
+                String phone = params[6];
+                String agree = params[7];
+
+                URL url = new URL("http", "10.0.2.2", 80, "register.php");
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setDoOutput(true);
+                httpURLConnection.setDoInput(true);
+                OutputStream outputStream = httpURLConnection.getOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+                String post_data = URLEncoder.encode("user_id", "UTF-8") + "=" + URLEncoder.encode(id, "UTF-8") + "&"
+                        + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(password, "UTF-8") + "&"
+                        + URLEncoder.encode("password2", "UTF-8") + "=" + URLEncoder.encode(password2, "UTF-8") + "&"
+                        + URLEncoder.encode("name", "UTF-8") + "=" + URLEncoder.encode(name, "UTF-8") + "&"
+                        + URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(email, "UTF-8") + "&"
+                        + URLEncoder.encode("phone", "UTF-8") + "=" + URLEncoder.encode(phone, "UTF-8") + "&"
+                        + URLEncoder.encode("agree", "UTF-8") + "=" + URLEncoder.encode(agree, "UTF-8");
+                bufferedWriter.write(post_data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                outputStream.close();
+                InputStream inputStream = httpURLConnection.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+                String result = "";
+                String line = "";
+                while ((line = bufferedReader.readLine()) != null) {
+                    result += line;
+                }
+                bufferedReader.close();
+                inputStream.close();
+                httpURLConnection.disconnect();
+                Log.e("TAG", "5입장");
                 return result;
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -66,7 +112,7 @@ public class BackgroundWorker extends AsyncTask<String,Void,String> {
     @Override
     protected void onPreExecute() {
         alertDialog = new AlertDialog.Builder(context).create();
-        alertDialog.setTitle("Login Status");
+        alertDialog.setTitle("알림");
     }
 
     @Override
@@ -79,4 +125,5 @@ public class BackgroundWorker extends AsyncTask<String,Void,String> {
     protected void onProgressUpdate(Void... values) {
         super.onProgressUpdate(values);
     }
+
 }

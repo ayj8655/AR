@@ -130,9 +130,9 @@ public class LoginActivity extends AppCompatActivity {
         // .facebook
 
         // mapbox
-        btnShowLocation = (Button) findViewById(R.id.Login_button);
+        btnShowLocation = (Button) findViewById(R.id.Naver_button);
 
-        /*
+        //네이버 버튼으로 지도 실행
         btnShowLocation.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
                 // 권한 요청을 해야 함
@@ -162,16 +162,16 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-                Intent intent = getIntent();
-                Double latitude = intent.getExtras().getDouble("위도");
-                Double longitude= intent.getExtras().getDouble("경도");
+ //               Intent intent = getIntent();
+ //               Double latitude = intent.getExtras().getDouble("위도");
+  //              Double longitude= intent.getExtras().getDouble("경도");
 
 
 
             }
         }
         );
-        */
+
 
         callPermission();  // 권한 요청을 해야 함
         // .mapbox
