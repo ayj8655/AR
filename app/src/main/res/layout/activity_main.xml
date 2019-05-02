@@ -7,7 +7,7 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/btn_start"
+        android:id="@+id/btnStartLoc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -17,7 +17,7 @@
         mapbox:layout_constraintEnd_toEndOf="@+id/mapView" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/btnSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
@@ -27,11 +27,10 @@
         android:text="검색"
         mapbox:layout_constraintBottom_toTopOf="@+id/mapView"
         mapbox:layout_constraintEnd_toEndOf="parent"
-        mapbox:layout_constraintStart_toEndOf="@+id/editText11"
         mapbox:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editText11"
+        android:id="@+id/txtDestination"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
@@ -40,9 +39,22 @@
         android:hint="목적지를 입력하세요"
         android:inputType="textPersonName"
         android:text="천안역"
-        mapbox:layout_constraintEnd_toStartOf="@+id/button3"
+        mapbox:layout_constraintEnd_toStartOf="@+id/btnSearch"
         mapbox:layout_constraintStart_toStartOf="parent"
         mapbox:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:enabled="false"
+        android:text="start nav"
+        android:textAllCaps="false"
+        android:textColor="@color/com_facebook_button_background_color"
+        mapbox:layout_constraintBottom_toBottomOf="parent"
+        mapbox:layout_constraintStart_toStartOf="parent" />
 
     <com.mapbox.mapboxsdk.maps.MapView
 
@@ -53,11 +65,11 @@
         mapbox:layout_constraintEnd_toEndOf="parent"
         mapbox:layout_constraintHorizontal_bias="0.0"
         mapbox:layout_constraintStart_toStartOf="parent"
-        mapbox:layout_constraintTop_toBottomOf="@+id/button3"
+        mapbox:layout_constraintTop_toBottomOf="@+id/btnSearch"
         mapbox:layout_constraintVertical_bias="1.0"
-        mapbox:mapbox_cameraTilt="0"
         mapbox:mapbox_cameraTargetLat="36.8321"
         mapbox:mapbox_cameraTargetLng="127.1764"
+        mapbox:mapbox_cameraTilt="0"
         mapbox:mapbox_cameraZoom="13"
         mapbox:mapbox_styleUrl="@string/mapbox_style_light">
 

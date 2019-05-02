@@ -25,6 +25,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.ar.core.examples.java.helloar.HelloArActivity;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineListener;
 import com.mapbox.android.core.location.LocationEnginePriority;
@@ -38,6 +39,7 @@ import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.Polyline;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
@@ -49,6 +51,10 @@ import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
 import com.mapbox.mapboxsdk.plugins.locationlayer.modes.CameraMode;
 import com.mapbox.mapboxsdk.plugins.locationlayer.modes.RenderMode;
+import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
+import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions;
+import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
+import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -65,17 +71,24 @@ import static com.mapbox.core.constants.Constants.PRECISION_6;
 //현재 지도
 
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, LocationEngineListener, PermissionsListener {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, LocationEngineListener,
+        PermissionsListener, MapboxMap.OnMapClickListener {
     // private MapView mapView;
-    private static final String TAG = "DirectionsActivity";
     private MapView mapView;
     private MapboxMap map;
+    private Button startButton;
     private DirectionsRoute currentRoute;
     private MapboxDirections client;
     private PermissionsManager permissionsManager;
     private LocationEngine locationEngine;
     private LocationLayerPlugin locationLayerPlugin;
     private Location originLocation;
+    private Point orginPosition;
+    private Point destinationPosition;
+private Marker destinationMarker;
+    private NavigationMapRoute navigationMapRoute;
+    private  static final String TAG = "MainActivity";
+
 
 
     Double latitude;
@@ -92,27 +105,34 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // 맵박스 사용하기 위한 접근 토큰 지정
         Mapbox.getInstance(this, getString(R.string.access_token));
         setContentView(R.layout.activity_main);
-
-        Intent intent = getIntent();
-        latitude= intent.getExtras().getDouble("위도");
-        longitude= intent.getExtras().getDouble("경도");
-
-        editText =(EditText)findViewById(R.id.editText11);
-
-        // 맵박스 사용하기 위한 접근 토큰 지정
-
+        editText =(EditText)findViewById(R.id.txtDestination);
+        startButton = findViewById(R.id.button3);
         // 아래 함수로 통해 목적지 주소값을 위도 경도 값으로 변경
-   //     getPointFromGeoCoder("null");
+        // getPointFromGeoCoder("null");
         // 사용자 현재 gps 위치
-        final Point origin = Point.fromLngLat(longitude, latitude);
+     //  Point origin = Point.fromLngLat(longitude, latitude);
         // 도착지 gps 위치
    //     final Point destination = Point.fromLngLat(destinationX, destinationY);
         // Setup the MapView
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
+
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //네이게이션  ui 실행
+                NavigationLauncherOptions options = NavigationLauncherOptions.builder()
+                        .origin(orginPosition).destination(destinationPosition)
+                        .shouldSimulateRoute(true)
+                        .build();
+
+                NavigationLauncher.startNavigation(MainActivity.this,options);
+            }
+        });
     }
 
     @Override
@@ -160,9 +180,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         } else {
             locationEngine.addLocationEngineListener(this);
         }
-
-
-
     }
     @SuppressWarnings("MissingPermission")
     private void  initializeLocationLayer() {
@@ -177,23 +194,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()),13.0));
     }
 
+    public void onMapClick(LatLng point) {
 
-    @Override
-    public void onMapReady(MapboxMap mapboxMap) {
-        map = mapboxMap;
-        enableLocation();
-    }
-    private void enableLocation() {
-        if (PermissionsManager.areLocationPermissionsGranted(this)) {
-            initializeLocationEngine();
-            initializeLocationLayer();
-        } else {
-            permissionsManager = new PermissionsManager(this);
-            permissionsManager.requestLocationPermissions(this);
+        if (destinationMarker != null) {
+            map.removeMarker(destinationMarker);
         }
+        destinationMarker = map.addMarker(new MarkerOptions().position(point));
+        destinationPosition = Point.fromLngLat(point.getLongitude(), point.getLatitude());
+        orginPosition = Point.fromLngLat(originLocation.getLongitude(), originLocation.getLatitude());
+
+        getRoute2(orginPosition, destinationPosition);
+        startButton.setEnabled(true);
+        startButton.setBackgroundResource(R.color.mapbox_blue);
     }
-
-
 
     private void getRoute(Point origin, Point destination) {
 
@@ -235,6 +248,61 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
     }
+
+
+    private void getRoute2(Point origin, Point destination) {
+        NavigationRoute.builder().accessToken(Mapbox.getAccessToken()).origin(origin).destination(destination)
+                .build().getRoute(new Callback<DirectionsResponse>() {
+            @Override
+            public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
+                if (response.body() == null) {
+                    Log.e(TAG, "no Routes found, check right user and access token");
+                    return;
+                } else if (response.body().routes().size() ==0) {
+                    Log.e(TAG, "no Routes found");
+                }
+
+                DirectionsRoute currentRoute = response.body().routes().get(0);
+
+                if (navigationMapRoute != null) {
+                    navigationMapRoute.removeRoute();
+                } else {
+                    navigationMapRoute = new NavigationMapRoute(null, mapView, map);
+
+                }
+                    navigationMapRoute.addRoute(currentRoute);
+
+            }
+
+            @Override
+            public void onFailure(Call<DirectionsResponse> call, Throwable t) {
+
+                Log.e(TAG, "eError" + t.getMessage());
+            }
+        });
+    }
+
+
+
+    @Override
+    public void onMapReady(MapboxMap mapboxMap) {
+        map = mapboxMap;
+        map.addOnMapClickListener(this);
+        enableLocation();
+    }
+    private void enableLocation() {
+        if (PermissionsManager.areLocationPermissionsGranted(this)) {
+            initializeLocationEngine();
+            initializeLocationLayer();
+        } else {
+            permissionsManager = new PermissionsManager(this);
+            permissionsManager.requestLocationPermissions(this);
+        }
+    }
+
+
+
+
 
     // 목적지 주소값을 통해 목적지 위도 경도를 얻어오는 구문
     public void getPointFromGeoCoder(String addr) {
@@ -339,6 +407,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void map_search(View view) {
+
+        Intent intent = new Intent();
+        intent.setClassName("com.google.ar.core.examples.java.helloar", "com.google.ar.core.examples.java.helloar.HelloArActivity");
+        startActivity(intent);
+
         Toast.makeText(getApplicationContext(),editText.getText().toString(), Toast.LENGTH_LONG).show();
         getPointFromGeoCoder(editText.getText().toString());
         final Point origin = Point.fromLngLat(longitude, latitude);

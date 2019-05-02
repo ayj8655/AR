@@ -10,12 +10,16 @@ android {
 
     defaultConfig {
         applicationId "com.example.ar"
+        //applicationId "com.google.ar.core.examples.java.helloar"
+        // AR Optional apps must declare minSdkVersion >= 14.
+        // AR Required apps must declare minSdkVersion >= 24.
         minSdkVersion 24
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -32,10 +36,24 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
+
     implementation 'com.mapbox.mapboxsdk:mapbox-sdk-services:3.1.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:6.0.1'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-locationlayer:0.5.0'
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation:0.13.0'
+    implementation('com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.13.0') {
+        transitive = true
+    }
 
     // Facebook SDK 추가
     implementation 'com.facebook.android:facebook-login:[4,5)'
+
+    // ARCore library
+    implementation 'com.google.ar:core:1.8.0'
+
+    // Obj - a simple Wavefront OBJ file loader
+    // https://github.com/javagl/Obj
+    implementation 'de.javagl:obj:0.2.1'
+
+    implementation 'com.android.support:design:28.0.0'
 }

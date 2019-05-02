@@ -129,52 +129,19 @@ public class LoginActivity extends AppCompatActivity {
         }
         // .facebook
 
-        // mapbox
+        // gps info
         btnShowLocation = (Button) findViewById(R.id.Naver_button);
-
         //네이버 버튼으로 지도 실행
         btnShowLocation.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
-                // 권한 요청을 해야 함
-                if (!isPermission) {
-                    callPermission();
-                    return;
-                }
-                gps = new GpsInfo(LoginActivity.this);
-                // GPS 사용유무 가져오기
-                if (gps.isGetLocation()) {
-                    latitude = gps.getLatitude();
-                    longitude = gps.getLongitude();
-                    //Toast.makeText(
-                      //      getApplicationContext(),
-                      //      "당신의 위치 - \n위도: " + latitude + "\n경도: " + longitude,
-                      //      Toast.LENGTH_LONG).show();
-                } else {
-                    // GPS 를 사용할수 없으므로
-                    gps.showSettingsAlert();
-                }
 
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.putExtra("위도", latitude);
-                intent.putExtra("경도", longitude);
+ //               intent.putExtra("위도", latitude);
+ //               intent.putExtra("경도", longitude);
                 startActivity(intent);
-
-
-
-
- //               Intent intent = getIntent();
- //               Double latitude = intent.getExtras().getDouble("위도");
-  //              Double longitude= intent.getExtras().getDouble("경도");
-
-
-
             }
-        }
-        );
-
-
-        callPermission();  // 권한 요청을 해야 함
-        // .mapbox
+        });
+        // .gps info
     }
 
     // facebook
@@ -218,7 +185,7 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    // mapbox
+    // gps info
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
                                            int[] grantResults) {
@@ -260,7 +227,7 @@ public class LoginActivity extends AppCompatActivity {
             isPermission = true;
         }
     }
-    // .mapbox
+    // .gps info
 
 
 }
