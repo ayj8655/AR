@@ -71,7 +71,7 @@
         mapbox:mapbox_cameraTargetLng="127.1764"
         mapbox:mapbox_cameraTilt="0"
         mapbox:mapbox_cameraZoom="13"
-        mapbox:mapbox_styleUrl="@string/mapbox_style_light">
+        mapbox:mapbox_styleUrl="mapbox://styles/mapbox/light-v9">
 
     </com.mapbox.mapboxsdk.maps.MapView>
 

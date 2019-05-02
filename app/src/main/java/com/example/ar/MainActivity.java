@@ -1,31 +1,18 @@
 package com.example.ar;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.ar.core.examples.java.helloar.HelloArActivity;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineListener;
 import com.mapbox.android.core.location.LocationEnginePriority;
@@ -85,14 +72,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Location originLocation;
     private Point orginPosition;
     private Point destinationPosition;
-private Marker destinationMarker;
+    private Marker destinationMarker;
     private NavigationMapRoute navigationMapRoute;
     private  static final String TAG = "MainActivity";
 
 
-
-    Double latitude;
-    Double longitude;
     EditText editText;
 
     double destinationX; // longitude
@@ -125,11 +109,11 @@ private Marker destinationMarker;
             @Override
             public void onClick(View v) {
                 //네이게이션  ui 실행
+                Log.e(TAG,"네비 실행");
                 NavigationLauncherOptions options = NavigationLauncherOptions.builder()
                         .origin(orginPosition).destination(destinationPosition)
                         .shouldSimulateRoute(true)
                         .build();
-
                 NavigationLauncher.startNavigation(MainActivity.this,options);
             }
         });
@@ -138,16 +122,23 @@ private Marker destinationMarker;
     @Override
     @SuppressWarnings("MissingPermission")
     public void onConnected() {
+        Log.e(TAG,"onConnected 실행");
         locationEngine.requestLocationUpdates();
     }
 
+
+
     @Override
     public void onLocationChanged(Location location) {
+        Log.e(TAG,"onLocationChanged 실행");
         if(location != null){
             originLocation = location;
             setCameraPostion(location);
         }
-    }
+        locationLayerPlugin = new LocationLayerPlugin(mapView,map,locationEngine);
+        locationLayerPlugin.setCameraMode(CameraMode.TRACKING_COMPASS);
+        locationLayerPlugin.setRenderMode(RenderMode.COMPASS);
+}
 
     @Override
     public void onExplanationNeeded(List<String> permissionsToExplain) {
@@ -169,6 +160,7 @@ private Marker destinationMarker;
 
     @SuppressWarnings("MissingPermission")
     private  void initializeLocationEngine() {
+        Log.e(TAG,"initializeLocationEngine 실행");
         locationEngine = new LocationEngineProvider(this).obtainBestLocationEngineAvailable();
         locationEngine.setPriority(LocationEnginePriority.HIGH_ACCURACY);
         locationEngine.activate();
@@ -183,6 +175,7 @@ private Marker destinationMarker;
     }
     @SuppressWarnings("MissingPermission")
     private void  initializeLocationLayer() {
+        Log.e(TAG,"initializeLocationLayer 실행");
         locationLayerPlugin = new LocationLayerPlugin(mapView,map,locationEngine);
         locationLayerPlugin.setLocationLayerEnabled(true);
         locationLayerPlugin.setCameraMode(CameraMode.TRACKING_COMPASS);
@@ -191,11 +184,12 @@ private Marker destinationMarker;
 
 
     private void setCameraPostion(Location location) {
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()),13.0));
+        Log.e(TAG,"setCameraPostion 실행");
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()),17.0));
     }
 
     public void onMapClick(LatLng point) {
-
+        Log.e(TAG,"onMapClick 실행");
         if (destinationMarker != null) {
             map.removeMarker(destinationMarker);
         }
@@ -286,11 +280,20 @@ private Marker destinationMarker;
 
     @Override
     public void onMapReady(MapboxMap mapboxMap) {
+        Log.e(TAG,"onMapReady 실행");
+
         map = mapboxMap;
         map.addOnMapClickListener(this);
         enableLocation();
+
+
+
     }
+
+
+
     private void enableLocation() {
+        Log.e(TAG,"enableLocation 실행");
         if (PermissionsManager.areLocationPermissionsGranted(this)) {
             initializeLocationEngine();
             initializeLocationLayer();
@@ -306,6 +309,7 @@ private Marker destinationMarker;
 
     // 목적지 주소값을 통해 목적지 위도 경도를 얻어오는 구문
     public void getPointFromGeoCoder(String addr) {
+        Log.e(TAG,"지오코더 실행");
         String destinationAddr = addr;
         Geocoder geocoder = new Geocoder(this);
         List<Address> listAddress = null;
@@ -320,6 +324,9 @@ private Marker destinationMarker;
     }
 
     private void drawRoute(DirectionsRoute route) {
+        Log.e(TAG,"drawRoute 실행");
+
+
         // Convert LineString coordinates into LatLng[]
         LineString lineString = LineString.fromPolyline(route.geometry(), PRECISION_6);
         List<Point> coordinates = lineString.coordinates();
@@ -397,24 +404,24 @@ private Marker destinationMarker;
         super.onLowMemory();
         mapView.onLowMemory();
     }
-
-    public void newmap(View view) {
-        // 카메라 위치 고정(내 gps 위치로 임의지정)
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                // 카메라는 반대의 값으로 적어줄 것
-                // 뒤에 숫자 15은 카메라 확대 배수이다( 15가 적당 )
-                new LatLng(latitude, longitude), 12));
-    }
+//
+//    public void newmap(View view) {
+//        // 카메라 위치 고정(내 gps 위치로 임의지정)
+//        map.animateCamera(CameraUpdateFactory.newLatLngZoom(
+//                // 카메라는 반대의 값으로 적어줄 것
+//                // 뒤에 숫자 15은 카메라 확대 배수이다( 15가 적당 )
+//                new LatLng(latitude, longitude), 8));
+//    }
 
     public void map_search(View view) {
-
-        Intent intent = new Intent();
-        intent.setClassName("com.google.ar.core.examples.java.helloar", "com.google.ar.core.examples.java.helloar.HelloArActivity");
-        startActivity(intent);
+        Log.e(TAG,"map_search 실행");
+        //Intent intent = new Intent();
+        //intent.setClassName("com.google.ar.core.examples.java.helloar", "com.google.ar.core.examples.java.helloar.HelloArActivity");
+        //startActivity(intent);
 
         Toast.makeText(getApplicationContext(),editText.getText().toString(), Toast.LENGTH_LONG).show();
         getPointFromGeoCoder(editText.getText().toString());
-        final Point origin = Point.fromLngLat(longitude, latitude);
+        final Point origin = Point.fromLngLat(originLocation.getLongitude(), originLocation.getLatitude());
         final Point destination = Point.fromLngLat(destinationX, destinationY);
 
         map.clear();//마커 및 폴리라인 모두 지우기

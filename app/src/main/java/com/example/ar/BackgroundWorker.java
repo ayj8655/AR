@@ -2,7 +2,9 @@ package com.example.ar;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -119,6 +121,25 @@ public class BackgroundWorker extends AsyncTask<String,Void,String> {
     protected void onPostExecute(String result) {
         alertDialog.setMessage(result);
         alertDialog.show();
+        if(result.equals("회원가입 되었습니다.")){
+            new Handler().postDelayed(new Runnable(){
+                @Override
+                public void run(){
+                    Intent i = new Intent(context, LoginActivity.class);
+                    context.startActivity(i);
+                }
+            },1000);//약 1초뒤에 run() 내부작업 실행
+        }
+
+        if(result.equals("로그인 되었습니다.")){
+            new Handler().postDelayed(new Runnable(){
+                @Override
+                public void run(){
+                    Intent i = new Intent(context, MainActivity.class);
+                    context.startActivity(i);
+                }
+            },500);
+        }
     }
 
     @Override
