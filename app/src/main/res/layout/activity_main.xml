@@ -70,8 +70,7 @@
         mapbox:mapbox_cameraTargetLat="36.8321"
         mapbox:mapbox_cameraTargetLng="127.1764"
         mapbox:mapbox_cameraTilt="0"
-        mapbox:mapbox_cameraZoom="13"
-        mapbox:mapbox_styleUrl="mapbox://styles/mapbox/light-v9">
+        mapbox:mapbox_cameraZoom="13">
 
     </com.mapbox.mapboxsdk.maps.MapView>
 

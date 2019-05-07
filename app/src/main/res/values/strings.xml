@@ -4,6 +4,10 @@
     <string name="Facebook_button">페이스북</string>
     <string name="Naver_button">네이버</string>
     <!-- mapbox -->
+    <string name="user_location_permission_explanation">위치권한주세요</string>
+    <string name="user_location_permission_not_granted">위치권한실패 종료함</string>
+    <string name="new_location">새로운 위치 : </string>
+
     <string name="access_token">pk.eyJ1IjoibWlua3lvdW5nIiwiYSI6ImNqdHpuMjJhdzBpenI0ZG1nMDluNXJwOW0ifQ.74VW-6-ZHTu1J5XhfOUy6Q</string>
     <!--Facebook App ID 추가-->
     <string name="facebook_app_id">2302566866461753</string>
