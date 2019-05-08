@@ -3,12 +3,13 @@ package com.example.ar;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -37,8 +38,8 @@ import java.util.Arrays;
 public class LoginActivity extends AppCompatActivity {
 
     //login
-    EditText UsernameEt, PasswordEt;
-
+    static EditText UseridEt, PasswordEt;
+    static String loginId, loginPwd;
     // facebook
     CallbackManager callbackManager;
 
@@ -58,14 +59,28 @@ public class LoginActivity extends AppCompatActivity {
     double longitude;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        //loginSession
+
+        SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
+
+        loginId = auto.getString("inputId", null);
+        loginPwd = auto.getString("inputPwd", null);
+
+        if (loginId != null && loginPwd != null) {
+            Toast.makeText(LoginActivity.this, loginId + "님 자동로그인 입니다.", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        //.loginSession
+
         //login
-        UsernameEt = (EditText)findViewById(R.id.etUserName);
+        UseridEt = (EditText)findViewById(R.id.etUserName);
         PasswordEt = (EditText)findViewById(R.id.etPassword);
         //.login
 
@@ -136,12 +151,13 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View arg0) {
 
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
- //               intent.putExtra("위도", latitude);
- //               intent.putExtra("경도", longitude);
+                //               intent.putExtra("위도", latitude);
+                //               intent.putExtra("경도", longitude);
                 startActivity(intent);
             }
         });
         // .gps info
+
     }
 
     // facebook
@@ -172,7 +188,7 @@ public class LoginActivity extends AppCompatActivity {
     // .facebook
 
     public void Login_onClick(View v){  //온클릭으로 인텐트
-        String username = UsernameEt.getText().toString();
+        String username = UseridEt.getText().toString();
         String password = PasswordEt.getText().toString();
         String type = "login";
         BackgroundWorker backgroundWorker = new BackgroundWorker(this);

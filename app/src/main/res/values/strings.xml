@@ -1,8 +1,6 @@
 <resources>
     <string name="app_name">AR</string>
-    <string name="Kakao_button">카카오</string>
-    <string name="Facebook_button">페이스북</string>
-    <string name="Naver_button">네이버</string>
+    <string name="Naver_button">지도</string>
     <!-- mapbox -->
     <string name="user_location_permission_explanation">위치권한주세요</string>
     <string name="user_location_permission_not_granted">위치권한실패 종료함</string>
@@ -12,4 +10,7 @@
     <!--Facebook App ID 추가-->
     <string name="facebook_app_id">2302566866461753</string>
     <string name="fb_login_protocol_scheme">fb2302566866461753</string>
+    <!--Navigation Bar-->
+    <string name="open">Open</string>
+    <string name="close">Close</string>
 </resources>

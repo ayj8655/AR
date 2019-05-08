@@ -2,14 +2,20 @@ package com.example.ar;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,9 +35,6 @@ import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
-import com.mapbox.mapboxsdk.annotations.Marker;
-import com.mapbox.mapboxsdk.annotations.MarkerOptions;
-import com.mapbox.mapboxsdk.annotations.Polyline;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -41,18 +44,9 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
-import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
-import com.mapbox.mapboxsdk.plugins.locationlayer.modes.CameraMode;
-import com.mapbox.mapboxsdk.plugins.locationlayer.modes.RenderMode;
-import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
-import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions;
-import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
-import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -65,8 +59,12 @@ import static com.mapbox.core.constants.Constants.PRECISION_6;
 //현재 지도
 
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback,
-        PermissionsListener, MapboxMap.OnMapClickListener {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, PermissionsListener,
+        MapboxMap.OnMapClickListener, NavigationView.OnNavigationItemSelectedListener {
+
+    LoginActivity loginActivity;
+    private DrawerLayout mDrawerlayout;
+    private ActionBarDrawerToggle mToggle;
 
     // Variables needed to initialize a map
     private MapboxMap mapboxMap;
@@ -77,34 +75,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LocationEngine locationEngine;
     private long DEFAULT_INTERVAL_IN_MILLISECONDS = 1000L;
     private long DEFAULT_MAX_WAIT_TIME = DEFAULT_INTERVAL_IN_MILLISECONDS * 5;
-    private LocationEngineResult result;
     // Variables needed to listen to location updates
     private MainActivityLocationCallback callback = new MainActivityLocationCallback(this);
     private static final String Tag = "MainActivity";
 
 
-    private MapboxMap map;
-    private Button startButton;
     private DirectionsRoute currentRoute;
     private MapboxDirections client;
-    private LocationLayerPlugin locationLayerPlugin;
-    private Location originLocation;
-    private Point orginPosition;
-    private Point destinationPosition;
-    private Marker destinationMarker;
-    private NavigationMapRoute navigationMapRoute;
     private  static final String TAG = "MainActivity";
-
-
 
     EditText editText;
 
     double destinationX; // longitude
     double destinationY; // latitude
-    double La;
-    double Lo;
-
-//288
+    double La;          //latitude
+    double Lo;          // longitude
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,38 +97,54 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         // 맵박스 사용하기 위한 접근 토큰 지정
         Mapbox.getInstance(this, getString(R.string.access_token));
         setContentView(R.layout.activity_main);
+
         editText =(EditText)findViewById(R.id.txtDestination);
-        startButton = findViewById(R.id.button3);
-        // 아래 함수로 통해 목적지 주소값을 위도 경도 값으로 변경
-        // getPointFromGeoCoder("null");
-        // 사용자 현재 gps 위치
-     //  Point origin = Point.fromLngLat(longitude, latitude);
-        // 도착지 gps 위치
-   //     final Point destination = Point.fromLngLat(destinationX, destinationY);
+        Button search_Button= findViewById(R.id.btnStartLoc);
+
+
         // Setup the MapView
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
-        Button search_Button= findViewById(R.id.btnStartLoc);
+        //.loginSession
+
+        if(loginActivity.loginId == null && loginActivity.loginPwd == null){
+            SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
+            SharedPreferences.Editor autoLogin = auto.edit();
+            autoLogin.putString("inputId", loginActivity.UseridEt.getText().toString());
+            autoLogin.putString("inputPwd", loginActivity.PasswordEt.getText().toString());
+            autoLogin.commit();
+            Toast.makeText(MainActivity.this, loginActivity.UseridEt.getText().toString()+"님 환영합니다.", Toast.LENGTH_SHORT).show();
+        }
+        //loginSession
+
         search_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), String.format("내 위치 : " + La + Lo), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), String.format("                     내위치 \n위도 : " + La + "\n경도 : "+Lo), Toast.LENGTH_SHORT).show();
             }
         });
-        startButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //네이게이션  ui 실행
-                Log.e(TAG,"네비 실행");
-                NavigationLauncherOptions options = NavigationLauncherOptions.builder()
-                        .origin(orginPosition).destination(destinationPosition)
-                        .shouldSimulateRoute(true)
-                        .build();
-                NavigationLauncher.startNavigation(MainActivity.this,options);
-            }
-        });
+
+
+        mDrawerlayout = (DrawerLayout) findViewById(R.id.drawer);
+        NavigationView navigationView = findViewById(R.id.navigationView);
+        navigationView.setNavigationItemSelectedListener(this);
+
+
+        mToggle = new ActionBarDrawerToggle(this, mDrawerlayout, R.string.open, R.string.close);
+        mDrawerlayout.addDrawerListener(mToggle);
+        mToggle.syncState();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        if(mToggle.onOptionsItemSelected(item)){
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -168,6 +169,32 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.dashboard:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new DashboardFragment()).commit();
+                break;
+            case R.id.share:
+                Toast.makeText(this, "Share", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.search:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SearchFragment()).commit();
+                break;
+            case R.id.settings:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();
+                break;
+            case R.id.activities:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ActivitiesFragment()).commit();
+                break;
+            case R.id.logout:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LogoutFragment()).commit();
+                break;
+        }
+        mDrawerlayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
     class MainActivityLocationCallback implements LocationEngineCallback<LocationEngineResult> {
 
         private final WeakReference<MainActivity> activityWeakReference;
@@ -175,7 +202,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         MainActivityLocationCallback(MainActivity activity) {
             this.activityWeakReference = new WeakReference<>(activity);
         }
-
         /**
          * The LocationEngineCallback interface's method which fires when the device's location has changed.
          *
@@ -193,17 +219,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     return;
                 }
 
-// Create a Toast which displays the new location's coordinates
+                // Create a Toast which displays the new location's coordinates
                 La = result.getLastLocation().getLatitude();
                 Lo = result.getLastLocation().getLongitude();
 
-//                Toast.makeText(activity, String.format("새로운 위치 : " + La + Lo), Toast.LENGTH_SHORT).show();
-
-//                Toast.makeText(activity, String.format(activity.getString(R.string.new_location),
-//                        String.format(result.getLastLocation().getLatitude()), String.format(result.getLastLocation().getLongitude())),
-                //                      Toast.LENGTH_SHORT).show();
-
-// Pass the new location to the Maps SDK's LocationComponent
+                // Pass the new location to the Maps SDK's LocationComponent
                 if (activity.mapboxMap != null && result.getLastLocation() != null) {
                     activity.mapboxMap.getLocationComponent().forceLocationUpdate(result.getLastLocation());
                 }
@@ -226,18 +246,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    private void setCameraPostion(Location location) {
-        Log.e(TAG,"setCameraPostion 실행");
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()),15.0));
-    }
-
     private void getRoute(Point origin, Point destination) {
         Log.e(TAG,"getRoute 실행");
         client = MapboxDirections.builder()
-                .origin(origin)
-                .destination(destination)
-                .overview(DirectionsCriteria.OVERVIEW_FULL)
-                .profile(DirectionsCriteria.PROFILE_CYCLING)
+                .origin(origin)//출발지 위도 경도
+                .destination(destination)//도착지 위도 경도
+                .overview(DirectionsCriteria.OVERVIEW_FULL)//정보 받는정도 최대
+                .profile(DirectionsCriteria.PROFILE_WALKING)//길찾기 방법(도보,자전거,자동차)
                 .accessToken(getString(R.string.access_token))
                 .build();
 
@@ -246,7 +261,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
                 Log.e(TAG,"onResponse 실행");
                 System.out.println(call.request().url().toString());
-
                 // You can get the generic HTTP info about the response
                 Log.d(TAG, "Response code: " + response.code());
                 if (response.body() == null) {
@@ -260,6 +274,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 currentRoute = response.body().routes().get(0);
                 Log.d(TAG, "Distance: " + currentRoute.distance());
 
+                int time = (int) (currentRoute.duration()/60);
+                //예상 시간을초단위로 받아옴
+                double distants = (currentRoute.distance()/1000);
+                //목적지까지의 거리를 m로 받아옴
+                Toast.makeText(getApplicationContext(), String.format("예상 시간 : " + String.valueOf(time)+" 분 \n" +
+                        "목적지 거리 : " +distants + " km"), Toast.LENGTH_LONG).show();
                 // Draw the route on the map
                 drawRoute(currentRoute);
             }
@@ -270,32 +290,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
     }
-//    private void getRoute2(Point origin, Point destination) {
-//        NavigationRoute.builder().accessToken(Mapbox.getAccessToken()).origin(origin).destination(destination)
-//                .build().getRoute(new Callback<DirectionsResponse>() {
-//            @Override
-//            public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
-//                if (response.body() == null) {
-//                    Log.e(TAG, "no Routes found, check right user and access token");
-//                    return;
-//                } else if (response.body().routes().size() ==0) {
-//                    Log.e(TAG, "no Routes found");
-//                }
-//                DirectionsRoute currentRoute = response.body().routes().get(0);
-//                if (navigationMapRoute != null) {
-//                    navigationMapRoute.removeRoute();
-//                } else {
-//                    navigationMapRoute = new NavigationMapRoute(null, mapView, map);
-//                }
-//                    navigationMapRoute.addRoute(currentRoute);
-//            }
-//            @Override
-//            public void onFailure(Call<DirectionsResponse> call, Throwable t) {
-//
-//                Log.e(TAG, "eError" + t.getMessage());
-//            }
-//        });
-//    }
+
+    private void drawRoute(DirectionsRoute route) {
+        Log.e(TAG,"drawRoute 실행");
+        // Convert LineString coordinates into LatLng[]
+        LineString lineString = LineString.fromPolyline(route.geometry(), PRECISION_6);
+        List<Point> coordinates = lineString.coordinates();
+        LatLng[] points = new LatLng[coordinates.size()];
+        for (int i = 0; i < coordinates.size(); i++) {
+            points[i] = new LatLng(
+                    coordinates.get(i).latitude(),
+                    coordinates.get(i).longitude());
+        }
+        // Draw Points on MapView
+        //될때도있고 안될때도 있음 ???원래 안되는게 정상
+        mapboxMap.clear();
+        mapboxMap.addPolyline(new PolylineOptions()
+                .add(points)
+                .color(Color.parseColor("#3bb2d0"))
+                .width(5));
+    }
 
     @Override
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
@@ -309,6 +323,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 });
     }
+
     /**
      * Initialize the Maps SDK's LocationComponent
      */
@@ -356,57 +371,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
-
-
-
-
-
-    private void drawRoute(DirectionsRoute route) {
-        Log.e(TAG,"drawRoute 실행");
-        // Convert LineString coordinates into LatLng[]
-        LineString lineString = LineString.fromPolyline(route.geometry(), PRECISION_6);
-        List<Point> coordinates = lineString.coordinates();
-        LatLng[] points = new LatLng[coordinates.size()];
-        for (int i = 0; i < coordinates.size(); i++) {
-            points[i] = new LatLng(
-                    coordinates.get(i).latitude(),
-                    coordinates.get(i).longitude());
-        }
-        // Draw Points on MapView
-        //될때도있고 안될때도 있음 ???원래 안되는게 정상
-        mapboxMap.clear();
-        mapboxMap.addPolyline(new PolylineOptions()
-                .add(points)
-                .color(Color.parseColor("#3bb2d0"))
-                .width(5));
-    }
-
-
     public void map_search(View view) {
         Log.e(TAG,"map_search 실행");
-        //Intent intent = new Intent();
-        //intent.setClassName("com.google.ar.core.examples.java.helloar", "com.google.ar.core.examples.java.helloar.HelloArActivity");
-        //startActivity(intent);
-
-
-
-        Toast.makeText(getApplicationContext(),editText.getText().toString(), Toast.LENGTH_LONG).show();
         getPointFromGeoCoder(editText.getText().toString());
         Point origin = Point.fromLngLat(Lo,La);
         Point destination = Point.fromLngLat(destinationX, destinationY);
         getRoute(origin,destination);//폴리라인 그리기
-//        map.animateCamera(CameraUpdateFactory.newLatLngZoom(//카메라 위치 지정
-//                // 카메라는 반대의 값으로 적어줄 것
-//                // 뒤에 숫자 15은 카메라 확대 배수이다( 15가 적당 )
-//                new LatLng(destination.latitude(), destination.longitude()), 12));
-//        map.addMarker(new MarkerOptions()//마커 추가
-//                .position(new LatLng(origin.latitude(), origin.longitude()))
-//                //.title("소우")
-//                .snippet("현재 위치"));
-//        map.addMarker(new MarkerOptions()//마커 추가
-//                .position(new LatLng(destination.latitude(), destination.longitude()))
-//                //.title("소우")
-//                .snippet("도착지"));
     }
 
     // 목적지 주소값을 통해 목적지 위도 경도를 얻어오는 구문
@@ -432,25 +402,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onStart() {
         super.onStart();
-        if (locationEngine != null) {
-//            locationEngine.requestLocationUpdates();
-        }
-        if (locationLayerPlugin != null) {
-            locationLayerPlugin.onStart();
-        }
         mapView.onStart();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-
-        if (locationEngine != null) {
- //           locationEngine.requestLocationUpdates();
-        }
-        if (locationLayerPlugin != null) {
-            locationLayerPlugin.onStop();
-        }
         mapView.onStop();
     }
 
@@ -469,7 +426,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onDestroy() {
         super.onDestroy();
-// Prevent leaks
+        // Prevent leaks
         if (locationEngine != null) {
             locationEngine.removeLocationUpdates(callback);
         }
@@ -481,15 +438,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onLowMemory();
         mapView.onLowMemory();
     }
-//
-//    public void newmap(View view) {
-//        // 카메라 위치 고정(내 gps 위치로 임의지정)
-//        map.animateCamera(CameraUpdateFactory.newLatLngZoom(
-//                // 카메라는 반대의 값으로 적어줄 것
-//                // 뒤에 숫자 15은 카메라 확대 배수이다( 15가 적당 )
-//                new LatLng(latitude, longitude), 8));
-//    }
-
 
     @Override
     public boolean onMapClick(@NonNull LatLng point) {

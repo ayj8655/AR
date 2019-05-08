@@ -12,8 +12,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="196dp"
         android:ems="10"
+        android:hint="아이디"
         android:inputType="textPersonName"
-        android:text="Name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -24,70 +24,50 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
         android:ems="10"
+        android:hint="비밀번호"
         android:inputType="textPassword"
         app:layout_constraintStart_toStartOf="@+id/etUserName"
         app:layout_constraintTop_toBottomOf="@+id/etUserName" />
 
     <Button
-        android:id="@+id/Kakao_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="1dp"
-        android:text="@string/Kakao_button"
-        app:layout_constraintBaseline_toBaselineOf="@+id/Facebook_button"
-        app:layout_constraintEnd_toStartOf="@+id/Facebook_button"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/Facebook_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="51dp"
-        android:text="@string/Facebook_button"
-        app:layout_constraintEnd_toStartOf="@+id/Naver_button"
-        app:layout_constraintStart_toEndOf="@+id/Kakao_button"
-        app:layout_constraintTop_toBottomOf="@+id/Login_button" />
-
-    <Button
         android:id="@+id/Naver_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
+        android:layout_marginTop="33dp"
         android:text="@string/Naver_button"
-        app:layout_constraintBaseline_toBaselineOf="@+id/Facebook_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/Facebook_button" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/login_button" />
 
     <Button
         android:id="@+id/Login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="27dp"
         android:onClick="Login_onClick"
         android:text="로그인"
-        app:layout_constraintStart_toStartOf="@+id/etPassword"
-        app:layout_constraintTop_toBottomOf="@+id/etPassword" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/Signup_button"
+        app:layout_constraintStart_toStartOf="@+id/etPassword" />
 
     <Button
         android:id="@+id/Signup_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="27dp"
         android:layout_marginEnd="1dp"
         android:onClick="Signup_onClick"
         android:text="회원가입"
-        app:layout_constraintBaseline_toBaselineOf="@+id/Login_button"
-        app:layout_constraintEnd_toEndOf="@+id/etPassword" />
+        app:layout_constraintEnd_toEndOf="@+id/etPassword"
+        app:layout_constraintTop_toBottomOf="@+id/etPassword" />
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="66dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="30dp"
         android:onClick="facebook_OnClick"
-        app:layout_constraintBottom_toTopOf="@+id/etUserName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="@+id/Login_button"
+        app:layout_constraintTop_toBottomOf="@+id/Login_button" />
 
 </android.support.constraint.ConstraintLayout>

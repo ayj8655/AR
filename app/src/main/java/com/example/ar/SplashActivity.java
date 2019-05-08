@@ -1,9 +1,8 @@
 package com.example.ar;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 //로딩
 public class SplashActivity extends AppCompatActivity {
@@ -18,7 +17,7 @@ public class SplashActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     //4000 대기 후 로그인 액티비티 실행
-        startActivity(new Intent(this,LoginActivity.class));
+        startActivity(new Intent(this, LoginActivity.class));
         finish();
     }
 }
