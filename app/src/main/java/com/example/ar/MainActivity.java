@@ -314,9 +314,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
         Log.e(Tag, "onMapReady");
+
         this.mapboxMap = mapboxMap;
-        mapboxMap.setStyle(Style.TRAFFIC_NIGHT,
-                new Style.OnStyleLoaded() {
+        mapboxMap.setStyle(Style.TRAFFIC_NIGHT, new Style.OnStyleLoaded() {
                     @Override
                     public void onStyleLoaded(@NonNull Style style) {
                         enableLocationComponent(style);

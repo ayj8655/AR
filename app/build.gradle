@@ -6,6 +6,7 @@ android {
     // Facebook SDK 추가
     repositories {
         mavenCentral()
+        maven { url 'https://mapbox.bintray.com/mapbox' }
     }
 
     defaultConfig {
@@ -26,6 +27,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+
 }
 
 dependencies {
@@ -42,10 +50,7 @@ dependencies {
     implementation 'com.mapbox.mapboxsdk:mapbox-sdk-services:3.1.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:7.3.2'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-locationlayer:0.5.0'
-    implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation:0.13.0'
-    implementation('com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.13.0') {
-        transitive = true
-    }
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.37.0'
 
     // Facebook SDK 추가
     implementation 'com.facebook.android:facebook-login:[4,5)'
