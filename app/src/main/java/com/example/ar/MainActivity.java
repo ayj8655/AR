@@ -35,6 +35,8 @@ import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.annotations.Marker;
+import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -44,6 +46,10 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
+import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions;
+import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
+import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -78,6 +84,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     // Variables needed to listen to location updates
     private MainActivityLocationCallback callback = new MainActivityLocationCallback(this);
     private static final String Tag = "MainActivity";
+    //navigation
+    private Location originLocation;
+    private Point originPosition;
+    private Point destinatonPosition;
+    private Marker destinationMarker;
+    private Button startButton;
+    private NavigationMapRoute navigationMapRoute;
+    private NavigationRoute navigationRoute;
+
+
 
 
     private DirectionsRoute currentRoute;
@@ -97,9 +113,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         // 맵박스 사용하기 위한 접근 토큰 지정
         Mapbox.getInstance(this, getString(R.string.access_token));
         setContentView(R.layout.activity_main);
-
+        startButton = findViewById(R.id.startButton);
         editText =(EditText)findViewById(R.id.txtDestination);
         Button search_Button= findViewById(R.id.btnStartLoc);
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean simulateRoute = true;
+                NavigationLauncherOptions options = NavigationLauncherOptions.builder()
+                        .directionsRoute(currentRoute)
+                        .shouldSimulateRoute(simulateRoute)
+                        .build();
+                // Call this method with Context from within an Activity
+                NavigationLauncher.startNavigation(MainActivity.this, options);
+            }
+        });
+
+
+
+
+
 
 
         // Setup the MapView
@@ -316,6 +349,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Log.e(Tag, "onMapReady");
 
         this.mapboxMap = mapboxMap;
+        mapboxMap.addOnMapClickListener(this);
+
         mapboxMap.setStyle(Style.TRAFFIC_NIGHT, new Style.OnStyleLoaded() {
                     @Override
                     public void onStyleLoaded(@NonNull Style style) {
@@ -430,6 +465,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (locationEngine != null) {
             locationEngine.removeLocationUpdates(callback);
         }
+
         mapView.onDestroy();
     }
 
@@ -441,6 +477,57 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public boolean onMapClick(@NonNull LatLng point) {
-        return false;
+
+        if (destinationMarker != null) {
+            mapboxMap.removeMarker(destinationMarker);
+        }
+
+        destinationMarker = mapboxMap.addMarker(new MarkerOptions().position(point));
+
+        destinatonPosition = Point.fromLngLat(point.getLongitude(), point.getLatitude());
+        originPosition = Point.fromLngLat(Lo, La);
+
+
+
+        getRoute2(originPosition, destinatonPosition);
+
+        startButton.setEnabled(true);
+
+return false;
     }
+    private void getRoute2 (Point origin, Point destinaton) {
+        NavigationRoute.builder(this).accessToken(Mapbox.getAccessToken())
+                .profile(DirectionsCriteria.PROFILE_WALKING)
+                .origin(origin)
+                .destination(destinaton).
+                build().
+                getRoute(new Callback<DirectionsResponse>() {
+            @Override
+            public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
+                    if (response.body() == null) {
+                        return;
+                    } else if (response.body().routes().size() ==0) {
+                        return;
+                    }
+
+                    currentRoute = response.body().routes().get(0);
+                if (navigationMapRoute != null) {
+                    navigationMapRoute.removeRoute();
+                } else {
+                    navigationMapRoute = new NavigationMapRoute(null, mapView, mapboxMap, R.style.NavigationMapRoute);
+                }
+                navigationMapRoute.addRoute(currentRoute);
+
+            }
+
+            @Override
+            public void onFailure(Call<DirectionsResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+
+
+
 }

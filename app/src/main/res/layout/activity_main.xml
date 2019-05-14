@@ -22,10 +22,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <Button
+            android:id="@+id/startButton"
+            android:layout_width="fill_parent"
+            android:layout_height="57dp"
+            android:layout_marginTop="400dp"
+            android:enabled="false"
+            android:text="Start navigation"
+            mapbox:layout_constraintStart_toStartOf="parent"
+            mapbox:layout_constraintTop_toTopOf="parent" />
+
+
         <FrameLayout
             android:id="@+id/fragment_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"></FrameLayout>
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"></FrameLayout>
 
         <Button
             android:id="@+id/btnSearch"
@@ -78,6 +93,7 @@
             mapbox:mapbox_cameraTargetLng="127.1764"
             mapbox:mapbox_cameraTilt="0"
             mapbox:mapbox_cameraZoom="13">
+
         </com.mapbox.mapboxsdk.maps.MapView>
 
     </android.support.constraint.ConstraintLayout>
