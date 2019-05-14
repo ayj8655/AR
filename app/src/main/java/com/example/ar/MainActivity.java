@@ -75,15 +75,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     // Variables needed to initialize a map
     private MapboxMap mapboxMap;
     private MapView mapView;
+
     // Variables needed to handle location permissions
     private PermissionsManager permissionsManager;
+
     // Variables needed to add the location engine
     private LocationEngine locationEngine;
     private long DEFAULT_INTERVAL_IN_MILLISECONDS = 1000L;
     private long DEFAULT_MAX_WAIT_TIME = DEFAULT_INTERVAL_IN_MILLISECONDS * 5;
+
     // Variables needed to listen to location updates
     private MainActivityLocationCallback callback = new MainActivityLocationCallback(this);
     private static final String Tag = "MainActivity";
+
     //navigation
     private Location originLocation;
     private Point originPosition;
@@ -92,10 +96,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Button startButton;
     private NavigationMapRoute navigationMapRoute;
     private NavigationRoute navigationRoute;
-
-
-
-
     private DirectionsRoute currentRoute;
     private MapboxDirections client;
     private  static final String TAG = "MainActivity";
@@ -119,10 +119,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean simulateRoute = true;
                 NavigationLauncherOptions options = NavigationLauncherOptions.builder()
                         .directionsRoute(currentRoute)
-                        .shouldSimulateRoute(simulateRoute)
                         .build();
                 // Call this method with Context from within an Activity
                 NavigationLauncher.startNavigation(MainActivity.this, options);
@@ -481,14 +479,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (destinationMarker != null) {
             mapboxMap.removeMarker(destinationMarker);
         }
-
         destinationMarker = mapboxMap.addMarker(new MarkerOptions().position(point));
-
         destinatonPosition = Point.fromLngLat(point.getLongitude(), point.getLatitude());
         originPosition = Point.fromLngLat(Lo, La);
-
-
-
         getRoute2(originPosition, destinatonPosition);
 
         startButton.setEnabled(true);
