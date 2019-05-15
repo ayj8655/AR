@@ -66,4 +66,8 @@ dependencies {
     implementation 'de.javagl:obj:0.2.1'
 
     implementation 'com.android.support:design:28.0.0'
+
+    //장소 자동완성
+    implementation 'com.google.android.libraries.places:places:1.0.0'
+    implementation 'com.android.support:cardview-v7:28.0.0'
 }

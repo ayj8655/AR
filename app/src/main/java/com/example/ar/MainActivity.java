@@ -2,6 +2,7 @@ package com.example.ar;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Address;
@@ -19,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mapbox.android.core.location.LocationEngine;
@@ -60,6 +62,16 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.mapbox.core.constants.Constants.PRECISION_6;
+
+import java.util.Arrays;
+
+import com.google.android.gms.common.api.Status;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.libraries.places.api.Places;
+
 
 
 //현재 지도
@@ -107,6 +119,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     double La;          //latitude
     double Lo;          // longitude
 
+    //String TAG = "placeautocomplete";
+    TextView txtView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -126,12 +141,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 NavigationLauncher.startNavigation(MainActivity.this, options);
             }
         });
-
-
-
-
-
-
 
         // Setup the MapView
         mapView = findViewById(R.id.mapView);
@@ -167,6 +176,42 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mDrawerlayout.addDrawerListener(mToggle);
         mToggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        //장소 자동완성
+
+        Button search = (Button)findViewById(R.id.btnSearch);
+        search.bringToFront();
+        txtView = findViewById(R.id.txtDestination);
+
+        // Initialize Places.
+        Places.initialize(getApplicationContext(), "AIzaSyA1zuxMWkupxfZ7ePhoFlII-TlRs6-wFTw");
+        // Create a new Places client instance.
+        PlacesClient placesClient = Places.createClient(this);
+
+        // Initialize the AutocompleteSupportFragment.
+        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
+                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+
+        // Specify the types of place data to return.
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
+
+        // Set up a PlaceSelectionListener to handle the response.
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                // TODO: Get info about the selected place.
+                txtView.setText(place.getName());
+                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
+            }
+
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+                Log.i(TAG, "An error occurred: " + status);
+            }
+        });
+
+        //.장소 자동완성
 
     }
 
@@ -219,7 +264,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ActivitiesFragment()).commit();
                 break;
             case R.id.logout:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LogoutFragment()).commit();
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+                SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
+                SharedPreferences.Editor editor = auto.edit();
+                editor.clear();
+                editor.commit();
+                Toast.makeText(MainActivity.this, "로그아웃.", Toast.LENGTH_SHORT).show();
+                //backgroundWorker.user_info = null;
+                finish();
                 break;
         }
         mDrawerlayout.closeDrawer(GravityCompat.START);
@@ -312,7 +365,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Toast.makeText(getApplicationContext(), String.format("예상 시간 : " + String.valueOf(time)+" 분 \n" +
                         "목적지 거리 : " +distants + " km"), Toast.LENGTH_LONG).show();
                 // Draw the route on the map
-                drawRoute(currentRoute);
+//                drawRoute(currentRoute);
             }
             @Override
             public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
@@ -406,10 +459,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void map_search(View view) {
         Log.e(TAG,"map_search 실행");
+        startButton.setEnabled(true);
         getPointFromGeoCoder(editText.getText().toString());
         Point origin = Point.fromLngLat(Lo,La);
         Point destination = Point.fromLngLat(destinationX, destinationY);
         getRoute(origin,destination);//폴리라인 그리기
+        getRoute2(origin,destination);
     }
 
     // 목적지 주소값을 통해 목적지 위도 경도를 얻어오는 구문
@@ -484,7 +539,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         originPosition = Point.fromLngLat(Lo, La);
         getRoute2(originPosition, destinatonPosition);
 
-        startButton.setEnabled(true);
+
 
 return false;
     }
