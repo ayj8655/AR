@@ -134,6 +134,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Intent intent = new Intent(getApplicationContext(), CameraActivity.class);
+                //               intent.putExtra("위도", latitude);
+                //               intent.putExtra("경도", longitude);
+                startActivity(intent);
+
+
                 NavigationLauncherOptions options = NavigationLauncherOptions.builder()
                         .directionsRoute(currentRoute)
                         .build();
@@ -168,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         mDrawerlayout = (DrawerLayout) findViewById(R.id.drawer);
-        NavigationView navigationView = findViewById(R.id.navigationView);
+        NavigationView navigationView = findViewById(R.id.navigationView2);
         navigationView.setNavigationItemSelectedListener(this);
 
 

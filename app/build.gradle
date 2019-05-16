@@ -53,8 +53,6 @@ dependencies {
     implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.37.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation:0.37.0'
 
-
-
     // Facebook SDK 추가
     implementation 'com.facebook.android:facebook-login:[4,5)'
 

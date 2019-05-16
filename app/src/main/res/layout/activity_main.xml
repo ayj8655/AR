@@ -8,6 +8,14 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <!--<com.mapbox.services.android.navigation.ui.v5.NavigationView-->
+        <!--android:id="@+id/navigationView"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--app:navigationLightTheme="@style/NavigationViewLight"-->
+        <!--app:navigationDarkTheme="@style/NavigationViewDark"-->
+    <!--/>-->
+
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -117,7 +125,7 @@
 
 
     <android.support.design.widget.NavigationView
-        android:id="@+id/navigationView"
+        android:id="@+id/navigationView2"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"

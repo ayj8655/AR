@@ -13,6 +13,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -51,7 +53,6 @@ public class LoginActivity extends AppCompatActivity {
     private boolean isAccessCoarseLocation = false;
     private boolean isPermission = false;
     // GPSTracker class
-    private GpsInfo gps;
 
     public static final int REQUEST_CODE_MAIN=101;
 
@@ -62,6 +63,14 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //타이틀바 숨기기
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        //상태바 숨기기
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+
         setContentView(R.layout.activity_login);
 
         //loginSession
