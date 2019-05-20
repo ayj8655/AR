@@ -11,9 +11,6 @@ android {
 
     defaultConfig {
         applicationId "com.example.ar"
-        //applicationId "com.google.ar.core.examples.java.helloar"
-        // AR Optional apps must declare minSdkVersion >= 14.
-        // AR Required apps must declare minSdkVersion >= 24.
         minSdkVersion 24
         targetSdkVersion 28
         versionCode 1
@@ -53,15 +50,12 @@ dependencies {
     implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.37.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation:0.37.0'
 
+
+
+
+
     // Facebook SDK 추가
     implementation 'com.facebook.android:facebook-login:[4,5)'
-
-    // ARCore library
-    implementation 'com.google.ar:core:1.8.0'
-
-    // Obj - a simple Wavefront OBJ file loader
-    // https://github.com/javagl/Obj
-    implementation 'de.javagl:obj:0.2.1'
 
     implementation 'com.android.support:design:28.0.0'
 

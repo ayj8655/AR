@@ -13,4 +13,5 @@
     <!--Navigation Bar-->
     <string name="open">Open</string>
     <string name="close">Close</string>
+    <string name="mapbox_access_token" translatable="false">sk.eyJ1IjoiYXlqODY1NSIsImEiOiJjanZtaWg4MmMxMXVlNDVvZjdhcmRwY3dhIn0.xFkFFi9l0ERgJ22YWD3HCA</string>
 </resources>
