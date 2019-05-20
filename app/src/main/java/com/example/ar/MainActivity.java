@@ -81,6 +81,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         MapboxMap.OnMapClickListener, NavigationView.OnNavigationItemSelectedListener {
 
     LoginActivity loginActivity;
+    BackgroundWorker backgroundWorker;
+
     private DrawerLayout mDrawerlayout;
     private ActionBarDrawerToggle mToggle;
 
@@ -122,6 +124,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     //String TAG = "placeautocomplete";
     TextView txtView;
 
+    static TextView txtname, txtemail;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -154,17 +158,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
-        //.loginSession
+        //loginSession
 
         if(loginActivity.loginId == null && loginActivity.loginPwd == null){
             SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
             SharedPreferences.Editor autoLogin = auto.edit();
             autoLogin.putString("inputId", loginActivity.UseridEt.getText().toString());
             autoLogin.putString("inputPwd", loginActivity.PasswordEt.getText().toString());
+            autoLogin.putString("inputName", backgroundWorker.user_info);
+
             autoLogin.commit();
             Toast.makeText(MainActivity.this, loginActivity.UseridEt.getText().toString()+"님 환영합니다.", Toast.LENGTH_SHORT).show();
         }
-        //loginSession
+
+
+
+        //.loginSession
 
         search_Button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -183,6 +192,37 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mDrawerlayout.addDrawerListener(mToggle);
         mToggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        //네비게이션바에 로그인 정보
+
+        View nav_header_view = navigationView.getHeaderView(0);
+
+        TextView txtname = (TextView) nav_header_view.findViewById(R.id.txtName);
+        TextView txtemail = (TextView) nav_header_view.findViewById(R.id.txtEmail);
+
+        if(loginActivity.loginName == null){
+            //처음 로그인할때
+            // txtname.setText(backgroundWorker.user_info);
+            if(backgroundWorker.user_info != null) {
+                String str = backgroundWorker.user_info;
+                String str_name = str.split(":")[0];  //":"를 기준으로 문자열 자름
+                String str_email = str.split(":")[1];
+                txtname.setText(str_name);
+                txtemail.setText(str_email);
+            }
+        }else{
+            //자동 로그인일때
+            //txtname.setText(MainActivity.loginName);
+            if(loginActivity.loginName != null) {
+                String str = loginActivity.loginName;
+                String str_name = str.split(":")[0];
+                String str_email = str.split(":")[1];
+                txtname.setText(str_name);
+                txtemail.setText(str_email);
+            }
+        }
+
+        //.네비게이션 바에 로그인 정보
 
         //장소 자동완성
 

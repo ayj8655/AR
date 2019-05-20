@@ -41,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
 
     //login
     static EditText UseridEt, PasswordEt;
-    static String loginId, loginPwd;
+    static String loginId, loginPwd, loginName;
     // facebook
     CallbackManager callbackManager;
 
@@ -79,6 +79,7 @@ public class LoginActivity extends AppCompatActivity {
 
         loginId = auto.getString("inputId", null);
         loginPwd = auto.getString("inputPwd", null);
+        loginName = auto.getString("inputName", null);
 
         if (loginId != null && loginPwd != null) {
             Toast.makeText(LoginActivity.this, loginId + "님 자동로그인 입니다.", Toast.LENGTH_SHORT).show();
