@@ -21,6 +21,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".NavigationMapRouteActivity"></activity>
         <activity android:name=".CameraActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".SignupActivity" />
@@ -28,8 +29,6 @@
             android:name=".SplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
-
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
