@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(getApplicationContext(), CameraActivity.class);
+                Intent intent = new Intent(getApplicationContext(), UnityPlayerActivity.class);
                 //               intent.putExtra("위도", latitude);
                 //               intent.putExtra("경도", longitude);
                 startActivity(intent);
