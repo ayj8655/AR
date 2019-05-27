@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(getApplicationContext(), UnityPlayerActivity.class);
+                Intent intent = new Intent(getApplicationContext(), CameraActivity.class);
                 //               intent.putExtra("위도", latitude);
                 //               intent.putExtra("경도", longitude);
                 startActivity(intent);
@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //loginSession
 
-        if(loginActivity.loginId == null && loginActivity.loginPwd == null){
+        if(loginActivity.loginId == null && loginActivity.loginPwd == null && loginActivity.nonMember == 0){
             SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
             SharedPreferences.Editor autoLogin = auto.edit();
             autoLogin.putString("inputId", loginActivity.UseridEt.getText().toString());
@@ -295,22 +295,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
-            case R.id.dashboard:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new DashboardFragment()).commit();
-                break;
-            case R.id.share:
-                Toast.makeText(this, "Share", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.search:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SearchFragment()).commit();
-                break;
-            case R.id.settings:
+            case R.id.GUIDE:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();
                 break;
-            case R.id.activities:
+            case R.id.SETTINGS:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();
+                break;
+            case R.id.RECENT:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ActivitiesFragment()).commit();
                 break;
-            case R.id.logout:
+            case R.id.LOGOUT:
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);
                 SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
@@ -321,6 +315,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //backgroundWorker.user_info = null;
                 finish();
                 break;
+            case R.id.INFO:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();
+                break;
+            case R.id.EXIT:
+                moveTaskToBack(true);
+                finish();
+                android.os.Process.killProcess(android.os.Process.myPid());
+                break;
+
         }
         mDrawerlayout.closeDrawer(GravityCompat.START);
         return true;
@@ -450,11 +453,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapboxMap.addOnMapClickListener(this);
 
         mapboxMap.setStyle(Style.TRAFFIC_NIGHT, new Style.OnStyleLoaded() {
-                    @Override
-                    public void onStyleLoaded(@NonNull Style style) {
-                        enableLocationComponent(style);
-                    }
-                });
+            @Override
+            public void onStyleLoaded(@NonNull Style style) {
+                enableLocationComponent(style);
+            }
+        });
     }
 
     /**
@@ -588,7 +591,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 
-return false;
+        return false;
     }
     private void getRoute2 (Point origin, Point destinaton) {
         NavigationRoute.builder(this).accessToken(Mapbox.getAccessToken())
@@ -597,32 +600,29 @@ return false;
                 .destination(destinaton).
                 build().
                 getRoute(new Callback<DirectionsResponse>() {
-            @Override
-            public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
-                    if (response.body() == null) {
-                        return;
-                    } else if (response.body().routes().size() ==0) {
-                        return;
+                    @Override
+                    public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
+                        if (response.body() == null) {
+                            return;
+                        } else if (response.body().routes().size() ==0) {
+                            return;
+                        }
+
+                        currentRoute = response.body().routes().get(0);
+                        if (navigationMapRoute != null) {
+                            navigationMapRoute.removeRoute();
+                        } else {
+                            navigationMapRoute = new NavigationMapRoute(null, mapView, mapboxMap, R.style.NavigationMapRoute);
+                        }
+                        navigationMapRoute.addRoute(currentRoute);
+
                     }
 
-                    currentRoute = response.body().routes().get(0);
-                if (navigationMapRoute != null) {
-                    navigationMapRoute.removeRoute();
-                } else {
-                    navigationMapRoute = new NavigationMapRoute(null, mapView, mapboxMap, R.style.NavigationMapRoute);
-                }
-                navigationMapRoute.addRoute(currentRoute);
+                    @Override
+                    public void onFailure(Call<DirectionsResponse> call, Throwable t) {
 
-            }
-
-            @Override
-            public void onFailure(Call<DirectionsResponse> call, Throwable t) {
-
-            }
-        });
+                    }
+                });
     }
-
-
-
 
 }

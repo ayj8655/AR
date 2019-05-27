@@ -1,16 +1,17 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">#E3F2FD</item>
+        <item name="android:color">#574228</item>
+        <item name="colorPrimaryDark">#A1CDE1</item>
+        <item name="android:textColorPrimary">@color/brown</item>
         <item name="colorAccent">@color/colorAccent</item>
-
     </style>
-    
+
     <style name="SplashTheme"  parent="@android:style/Theme.Light.NoTitleBar">
-        <item name="android:windowBackground">@drawable/dog</item>
+        <item name="android:windowBackground">@drawable/splash</item>
     </style>
     <style name="NavigationMapRoute">
         <!-- Colors -->

@@ -17,6 +17,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -46,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
     CallbackManager callbackManager;
 
     // mapbox
-    private Button btnShowLocation;
+    private TextView btnShowLocation;
     private final int PERMISSIONS_ACCESS_FINE_LOCATION = 1000;
     private final int PERMISSIONS_ACCESS_COARSE_LOCATION = 1001;
     private boolean isAccessFineLocation = false;
@@ -59,6 +60,7 @@ public class LoginActivity extends AppCompatActivity {
     double latitude;
     double longitude;
 
+    static int nonMember = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
         loginPwd = auto.getString("inputPwd", null);
         loginName = auto.getString("inputName", null);
 
-        if (loginId != null && loginPwd != null) {
+        if (loginId != null && loginPwd != null ) {
             Toast.makeText(LoginActivity.this, loginId + "님 자동로그인 입니다.", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
@@ -155,11 +157,11 @@ public class LoginActivity extends AppCompatActivity {
         // .facebook
 
         // gps info
-        btnShowLocation = (Button) findViewById(R.id.Naver_button);
+        btnShowLocation = (TextView) findViewById(R.id.Naver_button);
         //네이버 버튼으로 지도 실행
         btnShowLocation.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
-
+                nonMember = 1;
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 //               intent.putExtra("위도", latitude);
                 //               intent.putExtra("경도", longitude);

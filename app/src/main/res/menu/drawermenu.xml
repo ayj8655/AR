@@ -1,33 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/dashboard"
-        android:title="dashboard"
-        android:icon="@drawable/ic_dashboard_black_24dp"/>
+        android:id="@+id/GUIDE"
+        android:title="GUIDE"
+        android:icon="@drawable/ic_merge_type_black_24dp"/>
+
 
     <item
-        android:id="@+id/share"
-        android:title="Share"
-        android:icon="@drawable/ic_event_black_24dp"/>
+        android:id="@+id/RECENT"
+        android:icon="@drawable/ic_access_time_black_24dp"
+        android:title="RECENT"/>
+
 
     <item
-        android:id="@+id/search"
-        android:title="Search"
-        android:icon="@drawable/ic_youtube_searched_for_black_24dp"/>
-
-    <item
-        android:id="@+id/settings"
-        android:title="Settings"
+        android:id="@+id/SETTINGS"
+        android:title="SETTINGS"
         android:icon="@drawable/ic_settings_black_24dp"/>
 
     <item
-        android:id="@+id/activities"
-        android:title="Activities"
-        android:icon="@drawable/ic_activities_black_24dp"/>
+        android:id="@+id/INFO"
+        android:icon="@drawable/ic_info_outline_black_24dp"
+        android:title="VERSION-INFORMATION" />
 
     <item
-        android:id="@+id/logout"
+        android:id="@+id/LOGOUT"
         android:icon="@drawable/ic_exit_to_app_black_24dp"
-        android:title="Logout" />
+        android:title="LOGOUT" />
+
+    <item
+        android:id="@+id/EXIT"
+        android:icon="@drawable/ic_power_settings_new_black_24dp"
+        android:title="EXIT" />
+
+
 
 </menu>

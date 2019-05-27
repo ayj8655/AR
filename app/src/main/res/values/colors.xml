@@ -5,13 +5,12 @@
     <color name="colorAccent">#D81B60</color>
     <color name="white">#ffffff</color>
     <color name="darkgrey">#6c6c6c</color>
+    <color name="brown">#574228</color>
 
 
-
-
-    <color name="mapboxWhite">#ffffff</color>
+    <color name="mapboxWhite">#4D3A3A</color>
     <color name="mapboxBlue">#4264fb</color>
-    <color name="mapboxGrayLight">#c6d2e1</color>
+    <color name="mapboxGrayLight">#C6D2E1</color>
     <color name="mapboxPink">#ee4e8b</color>
     <color name="mapboxYellow">#d9d838</color>
     <color name="mapboxRed">#b43b71</color>
