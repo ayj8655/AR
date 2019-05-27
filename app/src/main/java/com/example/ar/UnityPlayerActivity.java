@@ -6,7 +6,10 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.Window;
+import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.unity3d.player.*;
 
@@ -21,8 +24,12 @@ public class UnityPlayerActivity extends Activity
         super.onCreate(savedInstanceState);
 
         mUnityPlayer = new UnityPlayer(this);
-        setContentView(mUnityPlayer);
+        setContentView(R.layout.activity_unity_player);
+
+        FrameLayout frameLayout = (FrameLayout)findViewById(R.id.unity_player_layout);
+        frameLayout.addView(mUnityPlayer.getView());
         mUnityPlayer.requestFocus();
+
     }
 
     @Override protected void onNewIntent(Intent intent)
@@ -112,4 +119,8 @@ public class UnityPlayerActivity extends Activity
     @Override public boolean onKeyDown(int keyCode, KeyEvent event)   { return mUnityPlayer.injectEvent(event); }
     @Override public boolean onTouchEvent(MotionEvent event)          { return mUnityPlayer.injectEvent(event); }
     /*API12*/ public boolean onGenericMotionEvent(MotionEvent event)  { return mUnityPlayer.injectEvent(event); }
+
+    public void aaaaa(View view) {
+        Toast.makeText(UnityPlayerActivity.this,  "님 자동로그인 입니다.", Toast.LENGTH_SHORT).show();
+    }
 }

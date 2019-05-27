@@ -4,70 +4,173 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#E3F2FD"
     tools:context=".LoginActivity">
 
     <EditText
         android:id="@+id/etUserName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="196dp"
+        android:layout_width="313dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="47dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="47dp"
+        android:background="@drawable/line"
+        android:backgroundTint="@color/mapboxWhite"
         android:ems="10"
-        android:hint="아이디"
+        android:hint="아이디 입력"
         android:inputType="textPersonName"
+        android:paddingLeft="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/txt_title" />
 
     <EditText
         android:id="@+id/etPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
+        android:layout_width="313dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="49dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="49dp"
+        android:background="@drawable/line"
+        android:backgroundTint="@color/mapboxWhite"
         android:ems="10"
-        android:hint="비밀번호"
+        android:hint="비밀번호 입력"
         android:inputType="textPassword"
-        app:layout_constraintStart_toStartOf="@+id/etUserName"
+        android:paddingLeft="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etUserName" />
 
     <Button
-        android:id="@+id/Naver_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="33dp"
-        android:text="@string/Naver_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login_button" />
-
-    <Button
         android:id="@+id/Login_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="313dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="49dp"
+        android:layout_marginTop="26dp"
+        android:layout_marginEnd="49dp"
+        android:background="@drawable/rounded_corners"
         android:onClick="Login_onClick"
         android:text="로그인"
-        app:layout_constraintBaseline_toBaselineOf="@+id/Signup_button"
-        app:layout_constraintStart_toStartOf="@+id/etPassword" />
-
-    <Button
-        android:id="@+id/Signup_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="27dp"
-        android:layout_marginEnd="1dp"
-        android:onClick="Signup_onClick"
-        android:text="회원가입"
-        app:layout_constraintEnd_toEndOf="@+id/etPassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etPassword" />
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/login_button"
+        android:layout_width="313dp"
+        android:layout_height="46dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="49dp"
+        android:layout_marginTop="64dp"
+        android:layout_marginEnd="49dp"
+        android:layout_marginBottom="8dp"
+        android:onClick="facebook_OnClick"
+        app:layout_constraintBottom_toTopOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Login_button"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/Signup_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="30dp"
-        android:onClick="facebook_OnClick"
-        app:layout_constraintStart_toStartOf="@+id/Login_button"
-        app:layout_constraintTop_toBottomOf="@+id/Login_button" />
+        android:layout_marginStart="196dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="37dp"
+        android:enabled="true"
+        android:onClick="Signup_onClick"
+        android:text="회원가입"
+        app:layout_constraintBottom_toTopOf="@+id/login_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Login_button"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/Naver_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="56dp"
+        android:layout_marginBottom="8dp"
+        android:text="비회원접속"
+        app:layout_constraintBottom_toTopOf="@+id/login_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Login_button"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/txt_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="77dp"
+        android:layout_marginTop="116dp"
+        android:layout_marginEnd="77dp"
+        android:fontFamily="casual"
+        android:text="GUIDE DOG "
+        android:textColor="#574228"
+        android:textSize="50sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="37dp"
+        android:text="|"
+        app:layout_constraintBottom_toTopOf="@+id/login_button"
+        app:layout_constraintEnd_toStartOf="@+id/Naver_button"
+        app:layout_constraintStart_toEndOf="@+id/Signup_button"
+        app:layout_constraintTop_toBottomOf="@+id/Login_button"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/img_footPrint"
+        android:layout_width="89dp"
+        android:layout_height="81dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/footprint"
+        app:layout_constraintBottom_toTopOf="@+id/etUserName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.065"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@drawable/alert_progress_drawable" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="413dp"
+        android:layout_height="242dp"
+        android:layout_marginTop="13dp"
+        android:background="@drawable/grass"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/login_button"
+        app:srcCompat="@drawable/alert_progress_drawable" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="93dp"
+        android:layout_height="77dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/cartoondog"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintHorizontal_bias="0.948"
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.42"
+        app:srcCompat="@drawable/alert_progress_drawable" />
 
 </android.support.constraint.ConstraintLayout>
