@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(getApplicationContext(), CameraActivity.class);
+                Intent intent = new Intent(getApplicationContext(), UnityPlayerActivity.class);
                 //               intent.putExtra("위도", latitude);
                 //               intent.putExtra("경도", longitude);
                 startActivity(intent);
@@ -296,13 +296,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.GUIDE:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();
                 break;
             case R.id.SETTINGS:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();
                 break;
             case R.id.RECENT:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ActivitiesFragment()).commit();
                 break;
             case R.id.LOGOUT:
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
@@ -316,7 +313,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 finish();
                 break;
             case R.id.INFO:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();
                 break;
             case R.id.EXIT:
                 moveTaskToBack(true);
