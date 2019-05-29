@@ -13,18 +13,25 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-
     <uses-feature android:glEsVersion="0x00020000" />
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
-    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
-    <uses-feature android:name="android.hardware.camera.front" android:required="false" />
-    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
-    <uses-feature android:name="android.hardware.touchscreen.multitouch" android:required="false" />
-    <uses-feature android:name="android.hardware.touchscreen.multitouch.distinct" android:required="false" />
-
-
-
-
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.front"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.touchscreen.multitouch"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.touchscreen.multitouch.distinct"
+        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -34,12 +41,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".menu_VERSION"></activity>
+        <activity android:name=".menu_SETTINGS" />
+        <activity android:name=".menu_GUIDE" />
+        <activity android:name=".Language_popUp" android:theme="@style/popupTheme" android:screenOrientation="portrait"/>
         <activity android:name=".CameraActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".SignupActivity" />
-
         <activity android:name=".UnityPlayerActivity" />
-
         <activity
             android:name=".SplashActivity"
             android:screenOrientation="portrait"

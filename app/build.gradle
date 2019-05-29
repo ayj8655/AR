@@ -65,11 +65,10 @@ dependencies {
 }
 
 
-allprojects{
-    repositories{
-        flatDir{
+allprojects {
+    repositories {
+        flatDir {
             dirs 'libs'
         }
     }
 }
-

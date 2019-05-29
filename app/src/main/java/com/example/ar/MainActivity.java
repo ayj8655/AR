@@ -296,14 +296,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.GUIDE:
+                Intent intent_guide = new Intent(MainActivity.this, menu_GUIDE.class);
+                startActivity(intent_guide);
                 break;
             case R.id.SETTINGS:
+                Intent intent_settings = new Intent(MainActivity.this, menu_SETTINGS.class);
+                startActivity(intent_settings);
                 break;
             case R.id.RECENT:
                 break;
             case R.id.LOGOUT:
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
+                Intent intent_logout = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent_logout);
                 SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
                 SharedPreferences.Editor editor = auto.edit();
                 editor.clear();
@@ -313,6 +317,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 finish();
                 break;
             case R.id.INFO:
+                Intent intent_info = new Intent(MainActivity.this, menu_VERSION.class);
+                startActivity(intent_info);
                 break;
             case R.id.EXIT:
                 moveTaskToBack(true);
