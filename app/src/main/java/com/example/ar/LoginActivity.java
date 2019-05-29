@@ -9,6 +9,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
@@ -20,7 +22,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -30,21 +35,29 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 
 //로그인
 public class LoginActivity extends AppCompatActivity {
 
+    MainActivity mainActivity;
     //login
     static EditText UseridEt, PasswordEt;
     static String loginId, loginPwd, loginName;
-    // facebook
-    CallbackManager callbackManager;
+    // FB add
+    private LoginButton loginButton;
+    private CircleImageView circleImageView;
+    private CallbackManager callbackManager;
+    public static String first_name, last_name, email, id, image_url;
+
 
     // mapbox
     private TextView btnShowLocation;
@@ -61,6 +74,7 @@ public class LoginActivity extends AppCompatActivity {
     double longitude;
 
     static int nonMember = 0;
+    static String facebook_status = "0";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,10 +86,15 @@ public class LoginActivity extends AppCompatActivity {
 //        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 //                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-
         setContentView(R.layout.activity_login);
 
         //loginSession
+        if(mainActivity.facebook_Receive == 1){
+            facebook_status = "1";
+        }
+        else{
+            facebook_status = "0";
+        }
 
         SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
 
@@ -96,7 +115,35 @@ public class LoginActivity extends AppCompatActivity {
         PasswordEt = (EditText)findViewById(R.id.etPassword);
         //.login
 
-        // facebook
+        // FB add
+        printKeyHash();
+
+        loginButton = findViewById(R.id.login_button);
+       // txtName = findViewById(R.id.profile_name); // nav_header_view.findViewById(R.id.txtName);
+        //txtEmail = findViewById(R.id.profile_email);
+       // circleImageView = findViewById(R.id.profile_pic);
+
+        callbackManager = CallbackManager.Factory.create();
+        loginButton.setReadPermissions(Arrays.asList("email", "public_profile"));
+        checkLoginStatus();
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                facebook_status = "1";
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+
+            }
+        });
+
+        /* facebook
         printKeyHash();
 
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
@@ -154,7 +201,8 @@ public class LoginActivity extends AppCompatActivity {
             // Just set User ID
 
         }
-        // .facebook
+         .facebook
+        */
 
         // gps info
         btnShowLocation = (TextView) findViewById(R.id.Naver_button);
@@ -169,7 +217,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
         // .gps info
-
     }
 
     // facebook
@@ -188,14 +235,77 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void facebook_OnClick(View view) {
+    /*public void facebook_OnClick(View view) {
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
-    }
+    }*/
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
+    {
         callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
+
+
+
+
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(intent);
+
+    }
+
+    AccessTokenTracker tokenTracker = new AccessTokenTracker() {
+        @Override
+        protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken)
+        {
+            if (currentAccessToken == null) {
+               // txtname.setText("");
+                //txtemail.setText("");
+               // circleImageView.setImageResource(0);
+                Toast.makeText(LoginActivity.this, "User Logged out", Toast.LENGTH_LONG).show();
+            }
+            else
+            {
+                loaduserProfile(currentAccessToken);
+
+            }
+        }
+    };
+
+    private void loaduserProfile(AccessToken newAccessToken) {
+        GraphRequest request = GraphRequest.newMeRequest(newAccessToken, new GraphRequest.GraphJSONObjectCallback() {
+            @Override
+            public void onCompleted(JSONObject object, GraphResponse response) {
+                try {
+                    first_name = object.getString("first_name");
+                    last_name = object.getString("last_name");
+                    email = object.getString("email");
+                    id = object.getString("id");
+                    image_url = "https://graph.facebook.com/"+id+"/picture?type=normal";
+
+
+                    RequestOptions requestOptions = new RequestOptions();
+                    requestOptions.dontAnimate();
+
+//                    Glide.with(LoginActivity.this).load(image_url).into(circleImageView);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "first_name, last_name, email, id");
+        request.setParameters(parameters);
+        request.executeAsync();
+
+    }
+
+    private void checkLoginStatus()
+    {
+        if (AccessToken.getCurrentAccessToken() != null)
+        {
+            loaduserProfile(AccessToken.getCurrentAccessToken());
+        }
+
     }
     // .facebook
 

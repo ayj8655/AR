@@ -2,6 +2,7 @@ package com.example.ar;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -57,6 +58,7 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -72,11 +74,7 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.libraries.places.api.Places;
 
-
-
 //현재 지도
-
-
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, PermissionsListener,
         MapboxMap.OnMapClickListener, NavigationView.OnNavigationItemSelectedListener {
 
@@ -124,8 +122,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     //String TAG = "placeautocomplete";
     TextView txtView;
 
-    static TextView txtname, txtemail;
+    // FB add
+    public TextView txtname, txtemail;
 
+    static int facebook_Receive = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -160,18 +160,34 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //loginSession
 
-        if(loginActivity.loginId == null && loginActivity.loginPwd == null && loginActivity.nonMember == 0){
-            SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
-            SharedPreferences.Editor autoLogin = auto.edit();
-            autoLogin.putString("inputId", loginActivity.UseridEt.getText().toString());
-            autoLogin.putString("inputPwd", loginActivity.PasswordEt.getText().toString());
-            autoLogin.putString("inputName", backgroundWorker.user_info);
-
-            autoLogin.commit();
-            Toast.makeText(MainActivity.this, loginActivity.UseridEt.getText().toString()+"님 환영합니다.", Toast.LENGTH_SHORT).show();
+        if(loginActivity.facebook_status.equals("1")){
+            facebook_Receive = 1;
         }
+        else{
+            facebook_Receive = 0;
+        }
+        if(loginActivity.loginId == null && loginActivity.loginPwd == null && loginActivity.nonMember == 0){
 
+            if(facebook_Receive == 1){
+                SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
+                SharedPreferences.Editor autoLogin = auto.edit();
+                autoLogin.putString("inputId", loginActivity.id);
+                autoLogin.putString("inputPwd", loginActivity.email);
+                autoLogin.putString("inputName", loginActivity.last_name);
+                autoLogin.commit();
+                Toast.makeText(MainActivity.this, loginActivity.id + "님 환영합니다.", Toast.LENGTH_SHORT).show();
+            }else{
+                SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
+                SharedPreferences.Editor autoLogin = auto.edit();
+                autoLogin.putString("inputId", loginActivity.UseridEt.getText().toString());
+                autoLogin.putString("inputPwd", loginActivity.PasswordEt.getText().toString());
+                autoLogin.putString("inputName", backgroundWorker.user_info);
 
+                autoLogin.commit();
+                Toast.makeText(MainActivity.this, loginActivity.UseridEt.getText().toString() + "님 환영합니다.", Toast.LENGTH_SHORT).show();
+            }
+
+        }
 
         //.loginSession
 
@@ -182,11 +198,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-
         mDrawerlayout = (DrawerLayout) findViewById(R.id.drawer);
         NavigationView navigationView = findViewById(R.id.navigationView2);
         navigationView.setNavigationItemSelectedListener(this);
-
 
         mToggle = new ActionBarDrawerToggle(this, mDrawerlayout, R.string.open, R.string.close);
         mDrawerlayout.addDrawerListener(mToggle);
@@ -194,38 +208,46 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //네비게이션바에 로그인 정보
-
         View nav_header_view = navigationView.getHeaderView(0);
 
-        TextView txtname = (TextView) nav_header_view.findViewById(R.id.txtName);
-        TextView txtemail = (TextView) nav_header_view.findViewById(R.id.txtEmail);
+        txtname = nav_header_view.findViewById(R.id.txtName);
+        txtemail = nav_header_view.findViewById(R.id.txtEmail);
+
 
         if(loginActivity.loginName == null){
             //처음 로그인할때
             // txtname.setText(backgroundWorker.user_info);
-            if(backgroundWorker.user_info != null) {
+            if(backgroundWorker.user_info != null && facebook_Receive == 0 ) {
                 String str = backgroundWorker.user_info;
                 String str_name = str.split(":")[0];  //":"를 기준으로 문자열 자름
                 String str_email = str.split(":")[1];
                 txtname.setText(str_name);
                 txtemail.setText(str_email);
             }
+            else{
+                txtname.setText(loginActivity.last_name);
+                txtemail.setText(loginActivity.email);
+            }
         }else{
             //자동 로그인일때
             //txtname.setText(MainActivity.loginName);
-            if(loginActivity.loginName != null) {
+
+            if (loginActivity.loginName != null && facebook_Receive == 1 ) {
                 String str = loginActivity.loginName;
                 String str_name = str.split(":")[0];
                 String str_email = str.split(":")[1];
                 txtname.setText(str_name);
                 txtemail.setText(str_email);
+            }else{
+                txtname.setText(loginActivity.loginName);
+                txtemail.setText(loginActivity.loginPwd);
             }
         }
+
 
         //.네비게이션 바에 로그인 정보
 
         //장소 자동완성
-
         Button search = (Button)findViewById(R.id.btnSearch);
         search.bringToFront();
         txtView = findViewById(R.id.txtDestination);
@@ -257,9 +279,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Log.i(TAG, "An error occurred: " + status);
             }
         });
-
         //.장소 자동완성
-
     }
 
     @Override
@@ -306,14 +326,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             case R.id.RECENT:
                 break;
             case R.id.LOGOUT:
-                Intent intent_logout = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent_logout);
                 SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
                 SharedPreferences.Editor editor = auto.edit();
                 editor.clear();
                 editor.commit();
+                Intent intent_logout = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent_logout);
                 Toast.makeText(MainActivity.this, "로그아웃.", Toast.LENGTH_SHORT).show();
-                //backgroundWorker.user_info = null;
+                facebook_Receive = 0;
                 finish();
                 break;
             case R.id.INFO:
@@ -417,7 +437,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Toast.makeText(getApplicationContext(), String.format("예상 시간 : " + String.valueOf(time)+" 분 \n" +
                         "목적지 거리 : " +distants + " km"), Toast.LENGTH_LONG).show();
                 // Draw the route on the map
-//                drawRoute(currentRoute);
+                drawRoute(currentRoute);
             }
             @Override
             public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
@@ -469,22 +489,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @SuppressWarnings( {"MissingPermission"})
     private void enableLocationComponent(@NonNull Style loadedMapStyle) {
         Log.e(TAG,"enableLocationComponent 실행");
-// Check if permissions are enabled and if not request
+        // Check if permissions are enabled and if not request
         if (PermissionsManager.areLocationPermissionsGranted(this)) {
-// Get an instance of the component
+            // Get an instance of the component
             LocationComponent locationComponent = mapboxMap.getLocationComponent();
-// Set the LocationComponent activation options
+            // Set the LocationComponent activation options
             LocationComponentActivationOptions locationComponentActivationOptions =
                     LocationComponentActivationOptions.builder(this, loadedMapStyle)
                             .useDefaultLocationEngine(false)
                             .build();
-// Activate with the LocationComponentActivationOptions object
+            // Activate with the LocationComponentActivationOptions object
             locationComponent.activateLocationComponent(locationComponentActivationOptions);
-// Enable to make component visible
+            // Enable to make component visible
             locationComponent.setLocationComponentEnabled(true);
-// Set the component's camera mode
+            // Set the component's camera mode
             locationComponent.setCameraMode(com.mapbox.mapboxsdk.location.modes.CameraMode.TRACKING);
-// Set the component's render mode
+            // Set the component's render mode
             locationComponent.setRenderMode(com.mapbox.mapboxsdk.location.modes.RenderMode.COMPASS);
             initLocationEngine();
         } else {
@@ -508,7 +528,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         locationEngine.requestLocationUpdates(request, callback, getMainLooper());
         locationEngine.getLastLocation(callback);
     }
-
 
     public void map_search(View view) {
         Log.e(TAG,"map_search 실행");
@@ -618,12 +637,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             navigationMapRoute = new NavigationMapRoute(null, mapView, mapboxMap, R.style.NavigationMapRoute);
                         }
                         navigationMapRoute.addRoute(currentRoute);
-
                     }
 
                     @Override
                     public void onFailure(Call<DirectionsResponse> call, Throwable t) {
-
                     }
                 });
     }

@@ -7,7 +7,7 @@
     <string name="new_location">새로운 위치 : </string>
 
     <string name="access_token">pk.eyJ1IjoibWlua3lvdW5nIiwiYSI6ImNqdHpuMjJhdzBpenI0ZG1nMDluNXJwOW0ifQ.74VW-6-ZHTu1J5XhfOUy6Q</string>
-    <!--Facebook App ID 추가-->
+    <!-- FB add -->
     <string name="facebook_app_id">2302566866461753</string>
     <string name="fb_login_protocol_scheme">fb2302566866461753</string>
     <!--Navigation Bar-->
