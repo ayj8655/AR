@@ -431,6 +431,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             points[i] = new LatLng(
                     coordinates.get(i).latitude(),
                     coordinates.get(i).longitude());
+            Log.e(TAG, "Error: " + points[i]);
         }
         // Draw Points on MapView
         //될때도있고 안될때도 있음 ???원래 안되는게 정상
