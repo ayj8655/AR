@@ -2,7 +2,10 @@ package com.example.ar;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -10,6 +13,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -21,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,6 +61,7 @@ import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -66,6 +72,7 @@ import retrofit2.Response;
 import static com.mapbox.core.constants.Constants.PRECISION_6;
 
 import java.util.Arrays;
+import java.util.Locale;
 
 import com.google.android.gms.common.api.Status;
 import com.google.android.libraries.places.api.model.Place;
@@ -194,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         search_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), String.format("                     내위치 \n위도 : " + La + "\n경도 : "+Lo), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), String.format("            내위치 \n위도 : " + La + "\n경도 : "+Lo), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -280,7 +287,47 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
         //.장소 자동완성
+        //Speak to Text 버튼
+
+        ImageButton sttButton = (ImageButton)findViewById(R.id.btn_stt);
+        sttButton.bringToFront();
+
+        sttButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.ENGLISH);
+                try{
+                    startActivityForResult(intent,200);
+                }catch (ActivityNotFoundException a){
+                    Toast.makeText(getApplicationContext(),"Intent problem", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
     }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 200){
+            if(resultCode == RESULT_OK && data != null){
+                ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                editText.setText(result.get(0));
+
+                startButton.setEnabled(true);
+                getPointFromGeoCoder(editText.getText().toString());
+                Point origin = Point.fromLngLat(Lo,La);
+                Point destination = Point.fromLngLat(destinationX, destinationY);
+                getRoute_walking(origin,destination);//폴리라인 그리기
+                getRoute_navi_walking(origin,destination);
+            }
+        }
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
@@ -299,6 +346,64 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onExplanationNeeded(List<String> permissionsToExplain) {
         Toast.makeText(this, R.string.user_location_permission_explanation, Toast.LENGTH_LONG).show();
     }
+
+
+    public void showDialog2(View _view) //검색시 다이얼로그 띄우기
+    {
+        final CharSequence[] oItems = {"도보", "자전거", "자동차"};
+
+        AlertDialog.Builder oDialog = new AlertDialog.Builder(this,
+                android.R.style.Theme_DeviceDefault_Light_Dialog_Alert);
+
+        oDialog.setTitle("방법을 선택하세요")
+                .setItems(oItems, new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                         if (which == 0 ) {
+                             //도보 길찾기 진행
+                             getPointFromGeoCoder(editText.getText().toString());
+                             Point origin = Point.fromLngLat(Lo,La);
+                             Point destination = Point.fromLngLat(destinationX, destinationY);
+                             getRoute_walking(origin,destination);//예상 시간 및 위도 경도 출력
+                             getRoute_navi_walking(origin,destination);//네비게이션 정보 저장
+
+                             startButton.setEnabled(true);
+
+                         } else if ( which == 1) {
+                            //자전거 길찾기 진행
+                             getPointFromGeoCoder(editText.getText().toString());
+                             Point origin = Point.fromLngLat(Lo,La);
+                             Point destination = Point.fromLngLat(destinationX, destinationY);
+                             getRoute_CYCLING(origin,destination);//예상 시간 및 위도 경도 출력
+                             getRoute_navi_CYCLING(origin,destination);//네비게이션 정보 저장
+
+                             startButton.setEnabled(true);
+
+                         } else if (which == 2) {
+                             //자동차 길찾기 진행
+                             getPointFromGeoCoder(editText.getText().toString());
+                             Point origin = Point.fromLngLat(Lo,La);
+                             Point destination = Point.fromLngLat(destinationX, destinationY);
+                             getRoute_DRIVING(origin,destination);//예상 시간 및 위도 경도 출력
+                             getRoute_navi_DRIVING(origin,destination);//네비게이션 정보 저장
+
+                             startButton.setEnabled(true);
+
+                         } else {
+                             Toast.makeText(getApplicationContext(), "오류 발생", Toast.LENGTH_LONG).show();
+                         }
+
+
+                        Toast.makeText(getApplicationContext(), oItems[which], Toast.LENGTH_LONG).show();
+                    }
+                })
+                .setCancelable(false) //뒤로가기로 취소 막기
+                .show();
+    }
+
+
 
     @Override
     public void onPermissionResult(boolean granted) {
@@ -402,7 +507,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    private void getRoute(Point origin, Point destination) {
+    private void getRoute_walking(Point origin, Point destination) {
         Log.e(TAG,"getRoute 실행");
         client = MapboxDirections.builder()
                 .origin(origin)//출발지 위도 경도
@@ -433,9 +538,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 int time = (int) (currentRoute.duration()/60);
                 //예상 시간을초단위로 받아옴
                 double distants = (currentRoute.distance()/1000);
+
                 //목적지까지의 거리를 m로 받아옴
                 Toast.makeText(getApplicationContext(), String.format("예상 시간 : " + String.valueOf(time)+" 분 \n" +
-                        "목적지 거리 : " +distants + " km"), Toast.LENGTH_LONG).show();
+                        "목적지 거리 : " +distants+ " km"), Toast.LENGTH_LONG).show();
                 // Draw the route on the map
                 drawRoute(currentRoute);
             }
@@ -446,6 +552,99 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
     }
+
+    private void getRoute_CYCLING(Point origin, Point destination) {
+        Log.e(TAG,"getRoute 실행");
+        client = MapboxDirections.builder()
+                .origin(origin)//출발지 위도 경도
+                .destination(destination)//도착지 위도 경도
+                .overview(DirectionsCriteria.OVERVIEW_FULL)//정보 받는정도 최대
+                .profile(DirectionsCriteria.PROFILE_CYCLING)//길찾기 방법(도보,자전거,자동차)
+                .accessToken(getString(R.string.access_token))
+                .build();
+
+        client.enqueueCall(new Callback<DirectionsResponse>() {
+            @Override
+            public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
+                Log.e(TAG,"onResponse 실행");
+                System.out.println(call.request().url().toString());
+                // You can get the generic HTTP info about the response
+                Log.d(TAG, "Response code: " + response.code());
+                if (response.body() == null) {
+                    Log.e(TAG, "No routes found, make sure you set the right user and access token.");
+                    return;
+                } else if (response.body().routes().size() < 1) {
+                    Log.e(TAG, "No routes found");
+                    return;
+                }
+                // Print some info about the route
+                currentRoute = response.body().routes().get(0);
+                Log.d(TAG, "Distance: " + currentRoute.distance());
+
+                int time = (int) (currentRoute.duration()/60);
+                //예상 시간을초단위로 받아옴
+                double distants = (currentRoute.distance()/1000);
+                //목적지까지의 거리를 m로 받아옴
+                Toast.makeText(getApplicationContext(), String.format("예상 시간 : " + String.valueOf(time)+" 분 \n" +
+                        "목적지 거리 : " +distants+ " km"), Toast.LENGTH_LONG).show();
+                // Draw the route on the map
+                drawRoute(currentRoute);
+            }
+            @Override
+            public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
+                Log.e(TAG, "Error: " + throwable.getMessage());
+                Toast.makeText(MainActivity.this, "Error: " + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    private void getRoute_DRIVING(Point origin, Point destination) {
+        Log.e(TAG,"getRoute 실행");
+        client = MapboxDirections.builder()
+                .origin(origin)//출발지 위도 경도
+                .destination(destination)//도착지 위도 경도
+                .overview(DirectionsCriteria.OVERVIEW_FULL)//정보 받는정도 최대
+                .profile(DirectionsCriteria.PROFILE_DRIVING)//길찾기 방법(도보,자전거,자동차)
+                .accessToken(getString(R.string.access_token))
+                .build();
+
+        client.enqueueCall(new Callback<DirectionsResponse>() {
+            @Override
+            public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
+                Log.e(TAG,"onResponse 실행");
+                System.out.println(call.request().url().toString());
+                // You can get the generic HTTP info about the response
+                Log.d(TAG, "Response code: " + response.code());
+                if (response.body() == null) {
+                    Log.e(TAG, "No routes found, make sure you set the right user and access token.");
+                    return;
+                } else if (response.body().routes().size() < 1) {
+                    Log.e(TAG, "No routes found");
+                    return;
+                }
+                // Print some info about the route
+                currentRoute = response.body().routes().get(0);
+                Log.d(TAG, "Distance: " + currentRoute.distance());
+
+                int time = (int) (currentRoute.duration()/60);
+                //예상 시간을초단위로 받아옴
+                double distants = (currentRoute.distance()/1000);
+                //목적지까지의 거리를 m로 받아옴
+                Toast.makeText(getApplicationContext(), String.format("예상 시간 : " + String.valueOf(time)+" 분 \n" +
+                        "목적지 거리 : " +distants+ " km"), Toast.LENGTH_LONG).show();
+                // Draw the route on the map
+                drawRoute(currentRoute);
+            }
+            @Override
+            public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
+                Log.e(TAG, "Error: " + throwable.getMessage());
+                Toast.makeText(MainActivity.this, "Error: " + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
 
     private void drawRoute(DirectionsRoute route) {
         Log.e(TAG,"drawRoute 실행");
@@ -460,12 +659,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             Log.e(TAG, "Error: " + points[i]);
         }
         // Draw Points on MapView
-        //될때도있고 안될때도 있음 ???원래 안되는게 정상
-        mapboxMap.clear();
-        mapboxMap.addPolyline(new PolylineOptions()
-                .add(points)
-                .color(Color.parseColor("#3bb2d0"))
-                .width(5));
+//        mapboxMap.clear();
+//      mapboxMap.addPolyline(new PolylineOptions().add(points).color(Color.parseColor("#3bb2d0")).width(5));
     }
 
     @Override
@@ -531,12 +726,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void map_search(View view) {
         Log.e(TAG,"map_search 실행");
-        startButton.setEnabled(true);
-        getPointFromGeoCoder(editText.getText().toString());
-        Point origin = Point.fromLngLat(Lo,La);
-        Point destination = Point.fromLngLat(destinationX, destinationY);
-        getRoute(origin,destination);//폴리라인 그리기
-        getRoute2(origin,destination);
+        showDialog2(view);
     }
 
     // 목적지 주소값을 통해 목적지 위도 경도를 얻어오는 구문
@@ -603,19 +793,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onMapClick(@NonNull LatLng point) {
 
-        if (destinationMarker != null) {
-            mapboxMap.removeMarker(destinationMarker);
-        }
-        destinationMarker = mapboxMap.addMarker(new MarkerOptions().position(point));
-        destinatonPosition = Point.fromLngLat(point.getLongitude(), point.getLatitude());
-        originPosition = Point.fromLngLat(Lo, La);
-        getRoute2(originPosition, destinatonPosition);
-
-
-
         return false;
     }
-    private void getRoute2 (Point origin, Point destinaton) {
+    private void getRoute_navi_walking (Point origin, Point destinaton) {
         NavigationRoute.builder(this).accessToken(Mapbox.getAccessToken())
                 .profile(DirectionsCriteria.PROFILE_WALKING)
                 .origin(origin)
@@ -644,5 +824,66 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 });
     }
+
+    private void getRoute_navi_CYCLING (Point origin, Point destinaton) {
+        NavigationRoute.builder(this).accessToken(Mapbox.getAccessToken())
+                .profile(DirectionsCriteria.PROFILE_CYCLING)
+                .origin(origin)
+                .destination(destinaton).
+                build().
+                getRoute(new Callback<DirectionsResponse>() {
+                    @Override
+                    public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
+                        if (response.body() == null) {
+                            return;
+                        } else if (response.body().routes().size() ==0) {
+                            return;
+                        }
+
+                        currentRoute = response.body().routes().get(0);
+                        if (navigationMapRoute != null) {
+                            navigationMapRoute.removeRoute();
+                        } else {
+                            navigationMapRoute = new NavigationMapRoute(null, mapView, mapboxMap, R.style.NavigationMapRoute);
+                        }
+                        navigationMapRoute.addRoute(currentRoute);
+                    }
+
+                    @Override
+                    public void onFailure(Call<DirectionsResponse> call, Throwable t) {
+                    }
+                });
+    }
+
+    private void getRoute_navi_DRIVING (Point origin, Point destinaton) {
+        NavigationRoute.builder(this).accessToken(Mapbox.getAccessToken())
+                .profile(DirectionsCriteria.PROFILE_DRIVING)
+                .origin(origin)
+                .destination(destinaton).
+                build().
+                getRoute(new Callback<DirectionsResponse>() {
+                    @Override
+                    public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
+                        if (response.body() == null) {
+                            return;
+                        } else if (response.body().routes().size() ==0) {
+                            return;
+                        }
+
+                        currentRoute = response.body().routes().get(0);
+                        if (navigationMapRoute != null) {
+                            navigationMapRoute.removeRoute();
+                        } else {
+                            navigationMapRoute = new NavigationMapRoute(null, mapView, mapboxMap, R.style.NavigationMapRoute);
+                        }
+                        navigationMapRoute.addRoute(currentRoute);
+                    }
+
+                    @Override
+                    public void onFailure(Call<DirectionsResponse> call, Throwable t) {
+                    }
+                });
+    }
+
 
 }
