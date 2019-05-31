@@ -88,6 +88,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+
         <ImageButton
             android:id="@+id/btn_stt"
             android:layout_width="wrap_content"
@@ -98,7 +99,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btnSearch"
             app:srcCompat="@drawable/ic_mic_black_24dp" />
-
 
         <EditText
             android:id="@+id/txtDestination"
@@ -125,6 +125,17 @@
             android:text="내 위치"
             mapbox:layout_constraintBottom_toBottomOf="parent"
             mapbox:layout_constraintEnd_toEndOf="@+id/mapView" />
+
+        <Button
+            android:id="@+id/스타일변경"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="116dp"
+            android:onClick="showDialog1"
+            android:text="Button"
+            app:layout_constraintBottom_toTopOf="@+id/startButton"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <com.mapbox.mapboxsdk.maps.MapView
             android:id="@+id/mapView"

@@ -46,10 +46,13 @@ import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
+import com.mapbox.mapboxsdk.location.modes.CameraMode;
+import com.mapbox.mapboxsdk.location.modes.RenderMode;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
@@ -136,13 +139,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // 맵박스 사용하기 위한 접근 토큰 지정
-        Mapbox.getInstance(this, getString(R.string.access_token));
+        Mapbox.getInstance(this, getString(R.string.access_token));// 맵박스 사용하기 위한 접근 토큰 지정
         setContentView(R.layout.activity_main);
         startButton = findViewById(R.id.startButton);
         editText =(EditText)findViewById(R.id.txtDestination);
         Button search_Button= findViewById(R.id.btnStartLoc);
-        startButton.setOnClickListener(new View.OnClickListener() {
+
+        startButton.setOnClickListener(new View.OnClickListener() { //네비게이션 버튼 나타내기+ar 실행하기
             @Override
             public void onClick(View v) {
 
@@ -150,8 +153,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //               intent.putExtra("위도", latitude);
                 //               intent.putExtra("경도", longitude);
                 startActivity(intent);
-
-
                 NavigationLauncherOptions options = NavigationLauncherOptions.builder()
                         .directionsRoute(currentRoute)
                         .build();
@@ -201,6 +202,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         search_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                CameraPosition position = new CameraPosition.Builder()
+                        .target(new LatLng(La, Lo)) // Sets the new camera position
+                        .zoom(13) // Sets the zoom , 줌 정도 숫자가 클수록 더많이 줌함
+                        .bearing(180) // Rotate the camera , 카메라 방향(북쪽이 0) 북쪽부터 시계방향으로 측정
+                        .tilt(0) // Set the camera tilt , 각도
+                        .build(); // Creates a CameraPosition from the builder
+
+                //https://docs.mapbox.com/android/maps/overview/camera/
+
+                //카메라 움직이기
+                mapboxMap.animateCamera(CameraUpdateFactory
+                        .newCameraPosition(position), 7000);
+
                 Toast.makeText(getApplicationContext(), String.format("            내위치 \n위도 : " + La + "\n경도 : "+Lo), Toast.LENGTH_SHORT).show();
             }
         });
@@ -403,7 +417,46 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .show();
     }
 
+    public void showDialog1(View _view) //지도 스타일 변경
+    {
+        final CharSequence[] oItems = {"STREETS", "DARK", "LIGHT", "OUTDOORS", "SATELLITE", "SATELLITE_STREETS"};
 
+        AlertDialog.Builder oDialog = new AlertDialog.Builder(this,
+                android.R.style.Theme_DeviceDefault_Light_Dialog_Alert);
+
+        oDialog.setTitle("스타일을 지정하세요")
+                .setItems(oItems, new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        if (which == 0 ) {
+                            mapboxMap.setStyle(Style.MAPBOX_STREETS);
+
+                        } else if ( which == 1) {
+                            mapboxMap.setStyle(Style.DARK);
+
+                        } else if (which == 2) {
+                            mapboxMap.setStyle(Style.LIGHT);
+
+                        } else if (which == 3) {
+                            mapboxMap.setStyle(Style.OUTDOORS);
+
+                        }else if (which == 4) {
+                            mapboxMap.setStyle(Style.SATELLITE);
+
+                        }else if (which == 5) {
+                            mapboxMap.setStyle(Style.SATELLITE_STREETS);
+
+                        }else {
+                            Toast.makeText(getApplicationContext(), "오류 발생", Toast.LENGTH_LONG).show();
+                        }
+                        Toast.makeText(getApplicationContext(), oItems[which], Toast.LENGTH_LONG).show();
+                    }
+                })
+                .setCancelable(false) //뒤로가기로 취소 막기
+                .show();
+    }
 
     @Override
     public void onPermissionResult(boolean granted) {
@@ -456,6 +509,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         return true;
     }
 
+
+    //https://docs.mapbox.com/help/tutorials/android-location-listening/
+    //안드로이드 기기 위치 추적
+    //현재 위치 얻어오는 콜백
     class MainActivityLocationCallback implements LocationEngineCallback<LocationEngineResult> {
 
         private final WeakReference<MainActivity> activityWeakReference;
@@ -498,7 +555,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
          */
         @Override
         public void onFailure(@NonNull Exception exception) {
-            Log.d("LocationChangeActivity", exception.getLocalizedMessage());
+            Log.e("LocationChangeActivity", exception.getLocalizedMessage());
             MainActivity activity = activityWeakReference.get();
             if (activity != null) {
                 Toast.makeText(activity, exception.getLocalizedMessage(),
@@ -523,7 +580,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Log.e(TAG,"onResponse 실행");
                 System.out.println(call.request().url().toString());
                 // You can get the generic HTTP info about the response
-                Log.d(TAG, "Response code: " + response.code());
+                Log.e(TAG, "Response code: " + response.code());
                 if (response.body() == null) {
                     Log.e(TAG, "No routes found, make sure you set the right user and access token.");
                     return;
@@ -533,13 +590,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
                 // Print some info about the route
                 currentRoute = response.body().routes().get(0);
-                Log.d(TAG, "Distance: " + currentRoute.distance());
+                Log.e(TAG, "Distance: " + currentRoute.distance());
 
                 int time = (int) (currentRoute.duration()/60);
                 //예상 시간을초단위로 받아옴
                 double distants = (currentRoute.distance()/1000);
-
                 //목적지까지의 거리를 m로 받아옴
+
+                distants = Math.round(distants*100)/100.0;
+                //Math.round() 함수는 소수점 첫째자리에서 반올림하여 정수로 남긴다
+                //원래 수에 100곱하고 round 실행 후 다시 100으로 나눈다 -> 둘째자리까지 남김
+
                 Toast.makeText(getApplicationContext(), String.format("예상 시간 : " + String.valueOf(time)+" 분 \n" +
                         "목적지 거리 : " +distants+ " km"), Toast.LENGTH_LONG).show();
                 // Draw the route on the map
@@ -569,7 +630,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Log.e(TAG,"onResponse 실행");
                 System.out.println(call.request().url().toString());
                 // You can get the generic HTTP info about the response
-                Log.d(TAG, "Response code: " + response.code());
+                Log.e(TAG, "Response code: " + response.code());
                 if (response.body() == null) {
                     Log.e(TAG, "No routes found, make sure you set the right user and access token.");
                     return;
@@ -579,12 +640,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
                 // Print some info about the route
                 currentRoute = response.body().routes().get(0);
-                Log.d(TAG, "Distance: " + currentRoute.distance());
+                Log.e(TAG, "Distance: " + currentRoute.distance());
 
                 int time = (int) (currentRoute.duration()/60);
                 //예상 시간을초단위로 받아옴
                 double distants = (currentRoute.distance()/1000);
                 //목적지까지의 거리를 m로 받아옴
+                distants = Math.round(distants*100)/100.0;
+
+                //Math.round() 함수는 소수점 첫째자리에서 반올림하여 정수로 남긴다
+                //원래 수에 100곱하고 round 실행 후 다시 100으로 나눈다 -> 둘째자리까지 남김
                 Toast.makeText(getApplicationContext(), String.format("예상 시간 : " + String.valueOf(time)+" 분 \n" +
                         "목적지 거리 : " +distants+ " km"), Toast.LENGTH_LONG).show();
                 // Draw the route on the map
@@ -615,7 +680,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Log.e(TAG,"onResponse 실행");
                 System.out.println(call.request().url().toString());
                 // You can get the generic HTTP info about the response
-                Log.d(TAG, "Response code: " + response.code());
+                Log.e(TAG, "Response code: " + response.code());
                 if (response.body() == null) {
                     Log.e(TAG, "No routes found, make sure you set the right user and access token.");
                     return;
@@ -625,12 +690,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
                 // Print some info about the route
                 currentRoute = response.body().routes().get(0);
-                Log.d(TAG, "Distance: " + currentRoute.distance());
+                Log.e(TAG, "Distance: " + currentRoute.distance());
 
                 int time = (int) (currentRoute.duration()/60);
                 //예상 시간을초단위로 받아옴
                 double distants = (currentRoute.distance()/1000);
                 //목적지까지의 거리를 m로 받아옴
+                distants = Math.round(distants*100)/100.0;
+                //Math.round() 함수는 소수점 첫째자리에서 반올림하여 정수로 남긴다
+                //원래 수에 100곱하고 round 실행 후 다시 100으로 나눈다 -> 둘째자리까지 남김
                 Toast.makeText(getApplicationContext(), String.format("예상 시간 : " + String.valueOf(time)+" 분 \n" +
                         "목적지 거리 : " +distants+ " km"), Toast.LENGTH_LONG).show();
                 // Draw the route on the map
@@ -643,8 +711,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
     }
-
-
 
     private void drawRoute(DirectionsRoute route) {
         Log.e(TAG,"drawRoute 실행");
@@ -666,11 +732,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
         Log.e(Tag, "onMapReady");
-
         this.mapboxMap = mapboxMap;
+
         mapboxMap.addOnMapClickListener(this);
 
-        mapboxMap.setStyle(Style.TRAFFIC_NIGHT, new Style.OnStyleLoaded() {
+
+        //↓ 초기 지도 스타일 지정
+        mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
                 enableLocationComponent(style);
@@ -688,20 +756,27 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (PermissionsManager.areLocationPermissionsGranted(this)) {
             // Get an instance of the component
             LocationComponent locationComponent = mapboxMap.getLocationComponent();
+
             // Set the LocationComponent activation options
             LocationComponentActivationOptions locationComponentActivationOptions =
                     LocationComponentActivationOptions.builder(this, loadedMapStyle)
                             .useDefaultLocationEngine(false)
                             .build();
+
             // Activate with the LocationComponentActivationOptions object
             locationComponent.activateLocationComponent(locationComponentActivationOptions);
+
             // Enable to make component visible
             locationComponent.setLocationComponentEnabled(true);
+
             // Set the component's camera mode
-            locationComponent.setCameraMode(com.mapbox.mapboxsdk.location.modes.CameraMode.TRACKING);
+            locationComponent.setCameraMode(CameraMode.TRACKING);
+
             // Set the component's render mode
-            locationComponent.setRenderMode(com.mapbox.mapboxsdk.location.modes.RenderMode.COMPASS);
+            locationComponent.setRenderMode(RenderMode.COMPASS);
+
             initLocationEngine();
+
         } else {
             permissionsManager = new PermissionsManager(this);
             permissionsManager.requestLocationPermissions(this);
@@ -791,15 +866,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
+    //지도 클릭시 자동 길찾기
     public boolean onMapClick(@NonNull LatLng point) {
+        if (destinationMarker != null) {
+            mapboxMap.removeMarker(destinationMarker);
+        }
+
+        destinationMarker = mapboxMap.addMarker(new MarkerOptions().position(point));//마커 추가
+        destinatonPosition = Point.fromLngLat(point.getLongitude(), point.getLatitude());//클릭한곳의 좌표
+        originPosition = Point.fromLngLat(Lo, La);//현재 좌표
+
+        getRoute_walking(originPosition, destinatonPosition);   //도보 길찾기
+        getRoute_navi_walking(originPosition, destinatonPosition);//도보 네비게이션
+        startButton.setEnabled(true);   //네비게이션 버튼 활성화
+
 
         return false;
     }
     private void getRoute_navi_walking (Point origin, Point destinaton) {
         NavigationRoute.builder(this).accessToken(Mapbox.getAccessToken())
-                .profile(DirectionsCriteria.PROFILE_WALKING)
-                .origin(origin)
-                .destination(destinaton).
+                .profile(DirectionsCriteria.PROFILE_WALKING)//도보 길찾기
+                .origin(origin)//출발지
+                .destination(destinaton).//도착지
                 build().
                 getRoute(new Callback<DirectionsResponse>() {
                     @Override
@@ -809,7 +897,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         } else if (response.body().routes().size() ==0) {
                             return;
                         }
-
                         currentRoute = response.body().routes().get(0);
                         if (navigationMapRoute != null) {
                             navigationMapRoute.removeRoute();
@@ -827,9 +914,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void getRoute_navi_CYCLING (Point origin, Point destinaton) {
         NavigationRoute.builder(this).accessToken(Mapbox.getAccessToken())
-                .profile(DirectionsCriteria.PROFILE_CYCLING)
-                .origin(origin)
-                .destination(destinaton).
+                .profile(DirectionsCriteria.PROFILE_CYCLING)//자전거 길찾기
+                .origin(origin)//출발지
+                .destination(destinaton).//도착지
                 build().
                 getRoute(new Callback<DirectionsResponse>() {
                     @Override
@@ -857,9 +944,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void getRoute_navi_DRIVING (Point origin, Point destinaton) {
         NavigationRoute.builder(this).accessToken(Mapbox.getAccessToken())
-                .profile(DirectionsCriteria.PROFILE_DRIVING)
-                .origin(origin)
-                .destination(destinaton).
+                .profile(DirectionsCriteria.PROFILE_DRIVING)//자동차 길찾기
+                .origin(origin)//출발지
+                .destination(destinaton).//도착지
                 build().
                 getRoute(new Callback<DirectionsResponse>() {
                     @Override
