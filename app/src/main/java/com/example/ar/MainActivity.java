@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Button startButton;
     private NavigationMapRoute navigationMapRoute;
     private NavigationRoute navigationRoute;
-    private DirectionsRoute currentRoute;
+    public static DirectionsRoute currentRoute;
     private MapboxDirections client;
     private  static final String TAG = "MainActivity";
 
@@ -126,8 +126,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     double destinationX; // longitude
     double destinationY; // latitude
-    double La;          //latitude
-    double Lo;          // longitude
+    public static double La;          //latitude
+    public static double Lo;          // longitude
 
     //String TAG = "placeautocomplete";
     TextView txtView;
@@ -136,6 +136,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public TextView txtname, txtemail;
 
     static int facebook_Receive = 0;
+
+
+    //기본 위도 경도 36.8321 , 127.176
+
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,7 +12,15 @@ import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.mapbox.api.directions.v5.models.DirectionsRoute;
+import com.mapbox.geojson.LineString;
+import com.mapbox.geojson.Point;
+import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.unity3d.player.*;
+
+import java.util.List;
+
+import static com.mapbox.core.constants.Constants.PRECISION_6;
 
 public class UnityPlayerActivity extends Activity
 {
@@ -121,6 +130,28 @@ public class UnityPlayerActivity extends Activity
     /*API12*/ public boolean onGenericMotionEvent(MotionEvent event)  { return mUnityPlayer.injectEvent(event); }
 
     public void aaaaa(View view) {
-        Toast.makeText(UnityPlayerActivity.this,  "님 자동로그인 입니다.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), String.format("            내위치 \n위도 : " + MainActivity.La + "\n경도 : "+MainActivity.Lo + "\n "), Toast.LENGTH_SHORT).show();
+        drawRoute(MainActivity.currentRoute);
     }
+
+
+    private void drawRoute(DirectionsRoute route) {
+        Log.e("ayj","유니티 drawRoute 실행");
+        // Convert LineString coordinates into LatLng[]
+        LineString lineString = LineString.fromPolyline(route.geometry(), PRECISION_6);
+        List<Point> coordinates = lineString.coordinates();
+        LatLng[] points = new LatLng[coordinates.size()];
+        for (int i = 0; i < coordinates.size(); i++) {
+            points[i] = new LatLng(
+                    coordinates.get(i).latitude(),
+                    coordinates.get(i).longitude());
+            Log.e("ayj", "Error: " + points[i]);
+        }
+        // Draw Points on MapView
+//        mapboxMap.clear();
+//      mapboxMap.addPolyline(new PolylineOptions().add(points).color(Color.parseColor("#3bb2d0")).width(5));
+    }
+
+
+
 }

@@ -140,7 +140,9 @@
         <com.mapbox.mapboxsdk.maps.MapView
             android:id="@+id/mapView"
             android:layout_width="411dp"
-            android:layout_height="626dp"
+            android:layout_height="545dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toTopOf="@+id/fragment_container"
             mapbox:layout_constraintBottom_toBottomOf="parent"
             mapbox:layout_constraintEnd_toEndOf="parent"
             mapbox:layout_constraintHorizontal_bias="0.0"
