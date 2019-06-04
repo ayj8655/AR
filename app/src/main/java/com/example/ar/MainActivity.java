@@ -485,12 +485,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Intent intent_guide = new Intent(MainActivity.this, menu_GUIDE.class);
                 startActivity(intent_guide);
                 break;
-            case R.id.SETTINGS:
-                Intent intent_settings = new Intent(MainActivity.this, menu_SETTINGS.class);
-                startActivity(intent_settings);
-                break;
-            case R.id.RECENT:
-                break;
             case R.id.LOGOUT:
                 SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
                 SharedPreferences.Editor editor = auto.edit();

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -18,7 +17,7 @@
         android:background="@drawable/line"
         android:backgroundTint="@color/mapboxWhite"
         android:ems="10"
-        android:hint="아이디 입력"
+        android:hint="@string/etUsername"
         android:inputType="textPersonName"
         android:paddingLeft="10dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -35,7 +34,7 @@
         android:background="@drawable/line"
         android:backgroundTint="@color/mapboxWhite"
         android:ems="10"
-        android:hint="비밀번호 입력"
+        android:hint="@string/etPassword"
         android:inputType="textPassword"
         android:paddingLeft="10dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -51,7 +50,7 @@
         android:layout_marginEnd="49dp"
         android:background="@drawable/rounded_corners"
         android:onClick="Login_onClick"
-        android:text="로그인"
+        android:text="@string/Login_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etPassword" />
@@ -81,7 +80,7 @@
         android:layout_marginBottom="37dp"
         android:enabled="true"
         android:onClick="Signup_onClick"
-        android:text="회원가입"
+        android:text="@string/Signup_button"
         app:layout_constraintBottom_toTopOf="@+id/login_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Login_button"
@@ -94,7 +93,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="56dp"
         android:layout_marginBottom="8dp"
-        android:text="비회원접속"
+        android:text="@string/Naver_button"
         app:layout_constraintBottom_toTopOf="@+id/login_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Login_button"
@@ -112,7 +111,7 @@
         android:textColor="#574228"
         android:textSize="50sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.533"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -172,5 +171,26 @@
         app:layout_constraintTop_toTopOf="@+id/imageView"
         app:layout_constraintVertical_bias="0.42"
         app:srcCompat="@drawable/alert_progress_drawable" />
+
+    <Button
+        android:id="@+id/korea"
+        android:layout_width="80dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/com_facebook_button_login_silver_background"
+        android:text="@string/kor"
+        app:layout_constraintEnd_toStartOf="@+id/eng"
+        app:layout_constraintTop_toTopOf="@+id/eng" />
+
+    <Button
+        android:id="@+id/eng"
+        android:layout_width="80dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/com_facebook_button_login_silver_background"
+        android:text="@string/en"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

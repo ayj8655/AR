@@ -15,7 +15,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:background="@drawable/common_google_signin_btn_icon_light_normal_background"
-        android:text="소리설정"
+        android:text="@string/txt_sound"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView18" />
@@ -40,7 +40,7 @@
         android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
         android:background="@drawable/common_google_signin_btn_icon_light_normal_background"
-        android:text="언어설정"
+        android:text="@string/txt_language"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_sound" />
@@ -52,7 +52,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="52dp"
         android:layout_marginEnd="8dp"
-        android:text="설정"
+        android:text="@string/textView18"
         android:textSize="25dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.022"

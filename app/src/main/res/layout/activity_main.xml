@@ -83,7 +83,7 @@
             android:gravity="right"
             android:onClick="map_search"
             android:paddingTop="20dp"
-            android:text="검색"
+            android:text="@string/btnSearch"
             android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -109,7 +109,7 @@
             android:ems="10"
             android:hint="목적지를 입력하세요"
             android:inputType="textPersonName"
-            android:text="천안 단국대학교"
+            android:text="@string/txtDestination"
             app:layout_constraintHorizontal_bias="0.0"
             mapbox:layout_constraintEnd_toStartOf="@+id/btnSearch"
             mapbox:layout_constraintStart_toStartOf="parent"

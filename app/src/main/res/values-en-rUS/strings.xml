@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GUIDE DOG</string>
+    <string name="Naver_button">Non-member</string>
+    <!-- mapbox -->
+    <string name="user_location_permission_explanation">위치권한주세요</string>
+    <string name="user_location_permission_not_granted">위치권한실패 종료함</string>
+    <string name="new_location">새로운 위치 : </string>
+
+    <string name="access_token">pk.eyJ1IjoibWlua3lvdW5nIiwiYSI6ImNqdHpuMjJhdzBpenI0ZG1nMDluNXJwOW0ifQ.74VW-6-ZHTu1J5XhfOUy6Q</string>
+    <!-- FB add -->
+    <string name="facebook_app_id">2302566866461753</string>
+    <string name="fb_login_protocol_scheme">fb2302566866461753</string>
+    <!--Navigation Bar-->
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+
+    <string name="Login_button">login</string>
+    <string name="kor">korea</string>
+    <string name="en">eng</string>
+
+    <string name="etUsername">ID</string>
+    <string name="etPassword">PASSWORD</string>
+
+    <string name="Signup_button">JOIN</string>
+    <string name="textView8">Terms and Conditions</string>
+    <string name="textView9">Location based service terms and conditions</string>
+    <string name="textView18">Setting</string>
+    <string name="txt_sound">Sound Setting</string>
+    <string name="txt_language">Language Setting</string>
+    <string name="textView10">Current version 1.0.0</string>
+    <string name="textView12">This is the latest version.</string>
+    <string name="textView13">Supporing environment is possible in higher than Android 7.0</string>
+    <string name="txtName">Non-Member</string>
+    <string name="btn_setting">Set up</string>
+    <string name="btn_cancle">Cancel</string>
+    <string name="btnSearch">Search</string>
+    <string name="txtDestination">Input the detination.</string>
+    <string name="GUIDE">GUIDE</string>
+    <string name="INFO">VERSION-INFO</string>
+    <string name="LOGOUT">LOGOUT</string>
+    <string name="EXIT">EXIT</string>
+
+</resources>

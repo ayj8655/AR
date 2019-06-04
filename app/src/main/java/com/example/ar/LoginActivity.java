@@ -9,20 +9,17 @@ import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
@@ -31,7 +28,6 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
@@ -41,12 +37,17 @@ import org.json.JSONObject;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
 //로그인
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
+
+
+    private Button btn_en, btn_ko, btn_jp;
+    private Locale myLocale;
 
     MainActivity mainActivity;
     //login
@@ -87,6 +88,14 @@ public class LoginActivity extends AppCompatActivity {
 //                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_login);
+
+        loadLocale();
+
+
+        this.btn_en = (Button) findViewById(R.id.eng);
+        this.btn_ko = (Button) findViewById(R.id.korea);
+        this.btn_en.setOnClickListener(this);
+        this.btn_ko.setOnClickListener(this);
 
         //loginSession
         if(mainActivity.facebook_Receive == 1){
@@ -365,7 +374,66 @@ public class LoginActivity extends AppCompatActivity {
             isPermission = true;
         }
     }
+
+    @Override
+    public void onClick(View v) {
+        String lang = "ko";
+        switch (v.getId()) {
+            case R.id.eng:
+                lang = "en";
+                break;
+            case R.id.korea:
+                lang = "ko";
+                break;
+            default:
+                break;
+        }
+        changeLang(lang);
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
+
+    }
     // .gps info
 
+    public void loadLocale()
+    {
+        Log.e("A","loadLocale 실행");
+        String langPref = "Language";
+        SharedPreferences prefs = getSharedPreferences("CommonPrefs", Activity.MODE_PRIVATE);
+        String language = prefs.getString(langPref, "");
+        changeLang(language);
+    }
+    public void saveLocale(String lang)
+    {
+        Log.e("A","saveLocale 실행");
+        String langPref = "Language";
+        SharedPreferences prefs = getSharedPreferences("CommonPrefs", Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(langPref, lang);
+        editor.commit();
+    }
+    public void changeLang(String lang)
+    {
+        if (lang.equalsIgnoreCase(""))
+            return;
+        Log.e("A","changeLang 실행");
+        myLocale = new Locale(lang);
+        saveLocale(lang);
+        Locale.setDefault(myLocale);
+        android.content.res.Configuration config = new android.content.res.Configuration();
+        config.locale = myLocale;
+        getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+      //  updateTexts();
+    }
 
+    @Override
+    public void onConfigurationChanged(android.content.res.Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (myLocale != null){
+            newConfig.locale = myLocale;
+            Locale.setDefault(myLocale);
+            getBaseContext().getResources().updateConfiguration(newConfig, getBaseContext().getResources().getDisplayMetrics());
+        }
+    }
 }

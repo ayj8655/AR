@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">GUIDE DOG</string>
-    <string name="Naver_button">지도</string>
+    <string name="Naver_button">비회원 접속</string>
     <!-- mapbox -->
     <string name="user_location_permission_explanation">위치권한주세요</string>
     <string name="user_location_permission_not_granted">위치권한실패 종료함</string>
@@ -13,4 +13,28 @@
     <!--Navigation Bar-->
     <string name="open">Open</string>
     <string name="close">Close</string>
+
+    <string name="Login_button">로그인</string>
+    <string name="kor">한국어</string>
+    <string name="en">영어</string>
+    <string name="etUsername">아이디 입력</string>
+    <string name="etPassword">비밀번호 입력</string>
+    <string name="Signup_button">회원가입</string>
+    <string name="textView8">서비스 이용약관</string>
+    <string name="textView9">위치기반서비스 이용약관</string>
+    <string name="textView18">설정</string>
+    <string name="txt_sound">소리설정</string>
+    <string name="txt_language">언어설정</string>
+    <string name="textView10">현재 버전 1.0.0</string>
+    <string name="textView12">현재 최신 버전입니다.</string>
+    <string name="textView13">지원환경 Android7.0 이상</string>
+    <string name="txtName">비회원</string>
+    <string name="btn_setting">설정</string>
+    <string name="btn_cancle">취소</string>
+    <string name="btnSearch">검색</string>
+    <string name="txtDestination">목적지를 입력하세요</string>
+    <string name="GUIDE">가이드</string>
+    <string name="INFO">버전 정보</string>
+    <string name="LOGOUT">로그아웃</string>
+    <string name="EXIT">종료</string>
 </resources>

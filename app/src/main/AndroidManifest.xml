@@ -42,9 +42,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".menu_VERSION"></activity>
-        <activity android:name=".menu_SETTINGS" />
         <activity android:name=".menu_GUIDE" />
-        <activity android:name=".Language_popUp" android:theme="@style/popupTheme" android:screenOrientation="portrait"/>
         <activity android:name=".CameraActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".SignupActivity" />

@@ -29,7 +29,7 @@
         android:layout_marginTop="72dp"
         android:layout_marginEnd="8dp"
         android:fontFamily="sans-serif"
-        android:text="비회원"
+        android:text="@string/txtName"
         android:textColor="#090808"
         android:textSize="24sp"
         android:textStyle="bold"

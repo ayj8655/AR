@@ -2,35 +2,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/GUIDE"
-        android:title="GUIDE"
+        android:title="@string/GUIDE"
         android:icon="@drawable/ic_merge_type_black_24dp"/>
-
-
-    <item
-        android:id="@+id/RECENT"
-        android:icon="@drawable/ic_access_time_black_24dp"
-        android:title="RECENT"/>
-
-
-    <item
-        android:id="@+id/SETTINGS"
-        android:title="SETTINGS"
-        android:icon="@drawable/ic_settings_black_24dp"/>
 
     <item
         android:id="@+id/INFO"
         android:icon="@drawable/ic_info_outline_black_24dp"
-        android:title="VERSION-INFORMATION" />
+        android:title="@string/INFO" />
 
     <item
         android:id="@+id/LOGOUT"
         android:icon="@drawable/ic_exit_to_app_black_24dp"
-        android:title="LOGOUT" />
+        android:title="@string/LOGOUT" />
 
     <item
         android:id="@+id/EXIT"
         android:icon="@drawable/ic_power_settings_new_black_24dp"
-        android:title="EXIT" />
+        android:title="@string/EXIT" />
 
 
 

@@ -30,7 +30,7 @@
                 android:id="@+id/textView8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="서비스 이용약관"
+                android:text="@string/textView8"
                 android:textSize="25dp" />
 
             <TextView
@@ -43,7 +43,7 @@
                 android:id="@+id/textView9"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="위치기반서비스 이용약관"
+                android:text="@string/textView9"
                 android:textSize="25dp" />
 
             <TextView
