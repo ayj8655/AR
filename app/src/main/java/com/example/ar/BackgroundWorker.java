@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 
+import com.facebook.login.LoginManager;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -148,6 +150,17 @@ public class BackgroundWorker extends AsyncTask<String,Void,String> {
                 e.printStackTrace();
             }
         }
+        else if(type.equals("facebookLogin")){
+
+            index = "facebookLogin";
+            String id = params[1];
+            String email = params[2];
+            String name = params[3];
+
+            String result = "";
+            result = id + ":" + email + ":" +name;
+            return result;
+        }
         return null;
     }
 
@@ -185,6 +198,10 @@ public class BackgroundWorker extends AsyncTask<String,Void,String> {
             }
         }
         else if(index.equals("get_userInfo")){
+            user_info = result;
+            Intent i = new Intent(context, MainActivity.class);
+            context.startActivity(i);
+        }else if(index.equals("facebookLogin")){
             user_info = result;
             Intent i = new Intent(context, MainActivity.class);
             context.startActivity(i);

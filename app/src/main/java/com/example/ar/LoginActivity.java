@@ -52,12 +52,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     MainActivity mainActivity;
     //login
     static EditText UseridEt, PasswordEt;
-    static String loginId, loginPwd, loginName;
+    static String loginId, loginPwd, loginName, loginTeg;
+    static int facebook_login;
+
     // FB add
     private LoginButton loginButton;
     private CircleImageView circleImageView;
     private CallbackManager callbackManager;
-    public static String first_name, last_name, email, id, image_url;
+    String first_name, last_name, email, id, image_url;
 
 
     // mapbox
@@ -98,20 +100,29 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         this.btn_ko.setOnClickListener(this);
 
         //loginSession
-        if(mainActivity.facebook_Receive == 1){
-            facebook_status = "1";
-        }
-        else{
-            facebook_status = "0";
-        }
-
         SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
 
         loginId = auto.getString("inputId", null);
         loginPwd = auto.getString("inputPwd", null);
         loginName = auto.getString("inputName", null);
+        loginTeg = auto.getString("inputTeg", null);
+
+     /*   if(facebook_login == 0){
+            mainActivity.facebook_login = 0;
+        }*/
+
+        if(facebook_login == 0){
+            mainActivity.facebook_login = 0;
+        }
 
         if (loginId != null && loginPwd != null ) {
+            if(loginTeg != null){
+                mainActivity.facebook_login = 1;
+            }
+            if(loginTeg == null){
+                mainActivity.facebook_login = 0;
+            }
+
             Toast.makeText(LoginActivity.this, loginId + "님 자동로그인 입니다.", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
@@ -138,7 +149,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                facebook_status = "1";
+                mainActivity.facebook_login = 1;
             }
 
             @Override
@@ -253,13 +264,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     {
         callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
-
-
-
-
-        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        startActivity(intent);
-
     }
 
     AccessTokenTracker tokenTracker = new AccessTokenTracker() {
@@ -267,20 +271,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken)
         {
             if (currentAccessToken == null) {
-               // txtname.setText("");
+                //txtname.setText("");
                 //txtemail.setText("");
-               // circleImageView.setImageResource(0);
-                Toast.makeText(LoginActivity.this, "User Logged out", Toast.LENGTH_LONG).show();
+                //circleImageView.setImageResource(0);
+                //Toast.makeText(LoginActivity.this, "User Logged out", Toast.LENGTH_LONG).show();
             }
             else
             {
                 loaduserProfile(currentAccessToken);
-
             }
         }
     };
 
+
     private void loaduserProfile(AccessToken newAccessToken) {
+        BackgroundWorker backgroundWorker1 = new BackgroundWorker(this);
         GraphRequest request = GraphRequest.newMeRequest(newAccessToken, new GraphRequest.GraphJSONObjectCallback() {
             @Override
             public void onCompleted(JSONObject object, GraphResponse response) {
@@ -291,7 +296,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     id = object.getString("id");
                     image_url = "https://graph.facebook.com/"+id+"/picture?type=normal";
 
+                    String type = "facebookLogin";
 
+                    backgroundWorker1.execute(type, id, email, first_name);
                     RequestOptions requestOptions = new RequestOptions();
                     requestOptions.dontAnimate();
 

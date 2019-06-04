@@ -52,7 +52,7 @@
             android:layout_marginBottom="8dp"
             android:background="@drawable/button_background"
             android:enabled="false"
-            android:text="Start navigation"
+            android:text="@string/startButton"
             app:layout_constraintBottom_toBottomOf="@+id/mapView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.008"
@@ -89,17 +89,6 @@
             app:layout_constraintTop_toTopOf="parent" />
 
 
-        <ImageButton
-            android:id="@+id/btn_stt"
-            android:layout_width="wrap_content"
-            android:layout_height="55dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="3dp"
-            android:background="@drawable/button_background"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnSearch"
-            app:srcCompat="@drawable/ic_mic_black_24dp" />
-
         <EditText
             android:id="@+id/txtDestination"
             android:layout_width="194dp"
@@ -109,7 +98,7 @@
             android:ems="10"
             android:hint="목적지를 입력하세요"
             android:inputType="textPersonName"
-            android:text="@string/txtDestination"
+            android:text="천안 단국대학교"
             app:layout_constraintHorizontal_bias="0.0"
             mapbox:layout_constraintEnd_toStartOf="@+id/btnSearch"
             mapbox:layout_constraintStart_toStartOf="parent"
@@ -122,25 +111,32 @@
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="16dp"
             android:background="@drawable/button_background"
-            android:text="내 위치"
+            android:text="@string/btnStartLoc"
             mapbox:layout_constraintBottom_toBottomOf="parent"
             mapbox:layout_constraintEnd_toEndOf="@+id/mapView" />
 
         <Button
-            android:id="@+id/스타일변경"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="116dp"
-            android:onClick="showDialog1"
-            android:text="Button"
-            app:layout_constraintBottom_toTopOf="@+id/startButton"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:id="@+id/btn_stt"
+            android:layout_width="25dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="3dp"
+            android:layout_marginBottom="640dp"
+            android:background="@drawable/mic"
+            android:bottomLeftRadius="5dp"
+            android:bottomRightRadius="5dp"
+            android:topLeftRadius="5dp"
+            android:topRightRadius="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnSearch"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            />
 
         <com.mapbox.mapboxsdk.maps.MapView
             android:id="@+id/mapView"
             android:layout_width="411dp"
-            android:layout_height="545dp"
+            android:layout_height="554dp"
             android:layout_marginTop="8dp"
             app:layout_constraintTop_toTopOf="@+id/fragment_container"
             mapbox:layout_constraintBottom_toBottomOf="parent"

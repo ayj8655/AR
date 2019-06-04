@@ -36,6 +36,9 @@
     <string name="txtDestination">목적지를 입력하세요</string>
     <string name="GUIDE">가이드</string>
     <string name="INFO">버전 정보</string>
+    <string name="STYLECHANGE">테마 변경</string>
     <string name="LOGOUT">로그아웃</string>
     <string name="EXIT">종료</string>
+    <string name="startButton">내비게이션 시작</string>
+    <string name="btnStartLoc">내 위치</string>
 </resources>

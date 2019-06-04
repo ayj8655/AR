@@ -29,6 +29,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineCallback;
 import com.mapbox.android.core.location.LocationEngineProvider;
@@ -135,7 +136,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     // FB add
     public TextView txtname, txtemail;
 
-    static int facebook_Receive = 0;
+    static int facebook_login = 0;
+
+    String f_userid, f_userpw, f_username;
 
 
     //기본 위도 경도 36.8321 , 127.176
@@ -176,31 +179,36 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //loginSession
 
-        if(loginActivity.facebook_status.equals("1")){
-            facebook_Receive = 1;
-        }
-        else{
-            facebook_Receive = 0;
-        }
         if(loginActivity.loginId == null && loginActivity.loginPwd == null && loginActivity.nonMember == 0){
-
-            if(facebook_Receive == 1){
+            if(facebook_login == 1){
+                if(backgroundWorker.user_info != null){
+                    String str = backgroundWorker.user_info;
+                    f_userid = str.split(":")[0];  //":"를 기준으로 문자열 자름
+                    f_userpw = str.split(":")[1];
+                    f_username = str.split(":")[2];
+                    backgroundWorker.user_info = null;
+                }
+                LoginManager.getInstance().logOut();
                 SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
                 SharedPreferences.Editor autoLogin = auto.edit();
-                autoLogin.putString("inputId", loginActivity.id);
-                autoLogin.putString("inputPwd", loginActivity.email);
-                autoLogin.putString("inputName", loginActivity.last_name);
+                autoLogin.putString("inputId", f_userid);
+                autoLogin.putString("inputPwd", f_userpw );
+                autoLogin.putString("inputName", f_username);
+                autoLogin.putString("inputTeg", "facebook");
+
                 autoLogin.commit();
-                Toast.makeText(MainActivity.this, loginActivity.id + "님 환영합니다.", Toast.LENGTH_SHORT).show();
-            }else{
+                Toast.makeText(MainActivity.this, f_userid +"님 환영합니다.", Toast.LENGTH_SHORT).show();
+            }
+            else{
                 SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
                 SharedPreferences.Editor autoLogin = auto.edit();
                 autoLogin.putString("inputId", loginActivity.UseridEt.getText().toString());
                 autoLogin.putString("inputPwd", loginActivity.PasswordEt.getText().toString());
                 autoLogin.putString("inputName", backgroundWorker.user_info);
+                autoLogin.putString("inputTeg", null);
 
                 autoLogin.commit();
-                Toast.makeText(MainActivity.this, loginActivity.UseridEt.getText().toString() + "님 환영합니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, loginActivity.UseridEt.getText().toString()+"님 환영합니다.", Toast.LENGTH_SHORT).show();
             }
 
         }
@@ -243,33 +251,42 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         txtemail = nav_header_view.findViewById(R.id.txtEmail);
 
 
-        if(loginActivity.loginName == null){
-            //처음 로그인할때
-            // txtname.setText(backgroundWorker.user_info);
-            if(backgroundWorker.user_info != null && facebook_Receive == 0 ) {
-                String str = backgroundWorker.user_info;
-                String str_name = str.split(":")[0];  //":"를 기준으로 문자열 자름
-                String str_email = str.split(":")[1];
-                txtname.setText(str_name);
-                txtemail.setText(str_email);
-            }
-            else{
-                txtname.setText(loginActivity.last_name);
-                txtemail.setText(loginActivity.email);
+        if(facebook_login == 1){
+            if(loginActivity.loginName == null){
+                //처음 로그인할때
+                // txtname.setText(backgroundWorker.user_info);
+                txtname.setText(f_username);
+                txtemail.setText(f_userpw);
+            }else{
+                //자동 로그인일때
+                //txtname.setText(MainActivity.loginName);
+                if(loginActivity.loginName != null) {
+                    txtname.setText(loginActivity.loginName);
+                    txtemail.setText(loginActivity.loginPwd);
+                }
             }
         }else{
-            //자동 로그인일때
-            //txtname.setText(MainActivity.loginName);
-
-            if (loginActivity.loginName != null && facebook_Receive == 1 ) {
-                String str = loginActivity.loginName;
-                String str_name = str.split(":")[0];
-                String str_email = str.split(":")[1];
-                txtname.setText(str_name);
-                txtemail.setText(str_email);
+            if(loginActivity.loginName == null){
+                //처음 로그인할때
+                // txtname.setText(backgroundWorker.user_info);
+                if(backgroundWorker.user_info != null) {
+                    String str = backgroundWorker.user_info;
+                    String str_name = str.split(":")[0];  //":"를 기준으로 문자열 자름
+                    String str_email = str.split(":")[1];
+                    txtname.setText(str_name);
+                    txtemail.setText(str_email);
+                    backgroundWorker.user_info=null;
+                }
             }else{
-                txtname.setText(loginActivity.loginName);
-                txtemail.setText(loginActivity.loginPwd);
+                //자동 로그인일때
+                //txtname.setText(MainActivity.loginName);
+                if(loginActivity.loginName != null) {
+                    String str = loginActivity.loginName;
+                    String str_name = str.split(":")[0];
+                    String str_email = str.split(":")[1];
+                    txtname.setText(str_name);
+                    txtemail.setText(str_email);
+                }
             }
         }
 
@@ -311,7 +328,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //.장소 자동완성
         //Speak to Text 버튼
 
-        ImageButton sttButton = (ImageButton)findViewById(R.id.btn_stt);
+        Button sttButton = (Button)findViewById(R.id.btn_stt);
         sttButton.bringToFront();
 
         sttButton.setOnClickListener(new View.OnClickListener(){
@@ -425,46 +442,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .show();
     }
 
-    public void showDialog1(View _view) //지도 스타일 변경
-    {
-        final CharSequence[] oItems = {"STREETS", "DARK", "LIGHT", "OUTDOORS", "SATELLITE", "SATELLITE_STREETS"};
-
-        AlertDialog.Builder oDialog = new AlertDialog.Builder(this,
-                android.R.style.Theme_DeviceDefault_Light_Dialog_Alert);
-
-        oDialog.setTitle("스타일을 지정하세요")
-                .setItems(oItems, new DialogInterface.OnClickListener()
-                {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which)
-                    {
-                        if (which == 0 ) {
-                            mapboxMap.setStyle(Style.MAPBOX_STREETS);
-
-                        } else if ( which == 1) {
-                            mapboxMap.setStyle(Style.DARK);
-
-                        } else if (which == 2) {
-                            mapboxMap.setStyle(Style.LIGHT);
-
-                        } else if (which == 3) {
-                            mapboxMap.setStyle(Style.OUTDOORS);
-
-                        }else if (which == 4) {
-                            mapboxMap.setStyle(Style.SATELLITE);
-
-                        }else if (which == 5) {
-                            mapboxMap.setStyle(Style.SATELLITE_STREETS);
-
-                        }else {
-                            Toast.makeText(getApplicationContext(), "오류 발생", Toast.LENGTH_LONG).show();
-                        }
-                        Toast.makeText(getApplicationContext(), oItems[which], Toast.LENGTH_LONG).show();
-                    }
-                })
-                .setCancelable(false) //뒤로가기로 취소 막기
-                .show();
-    }
 
     @Override
     public void onPermissionResult(boolean granted) {
@@ -486,6 +463,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 startActivity(intent_guide);
                 break;
             case R.id.LOGOUT:
+                LoginManager.getInstance().logOut();
+                loginActivity.facebook_login = 0;
                 SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
                 SharedPreferences.Editor editor = auto.edit();
                 editor.clear();
@@ -493,7 +472,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Intent intent_logout = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent_logout);
                 Toast.makeText(MainActivity.this, "로그아웃.", Toast.LENGTH_SHORT).show();
-                facebook_Receive = 0;
                 finish();
                 break;
             case R.id.INFO:
@@ -501,10 +479,49 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 startActivity(intent_info);
                 break;
             case R.id.EXIT:
+                LoginManager.getInstance().logOut();
                 moveTaskToBack(true);
                 finish();
                 android.os.Process.killProcess(android.os.Process.myPid());
                 break;
+            case R.id.STYLECHANGE:
+                final CharSequence[] oItems = {"STREETS", "DARK", "LIGHT", "OUTDOORS", "SATELLITE", "SATELLITE_STREETS"};
+
+                AlertDialog.Builder oDialog = new AlertDialog.Builder(this,
+                        android.R.style.Theme_DeviceDefault_Light_Dialog_Alert);
+
+                oDialog.setTitle("스타일을 지정하세요")
+                        .setItems(oItems, new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                if (which == 0 ) {
+                                    mapboxMap.setStyle(Style.MAPBOX_STREETS);
+
+                                } else if ( which == 1) {
+                                    mapboxMap.setStyle(Style.DARK);
+
+                                } else if (which == 2) {
+                                    mapboxMap.setStyle(Style.LIGHT);
+
+                                } else if (which == 3) {
+                                    mapboxMap.setStyle(Style.OUTDOORS);
+
+                                }else if (which == 4) {
+                                    mapboxMap.setStyle(Style.SATELLITE);
+
+                                }else if (which == 5) {
+                                    mapboxMap.setStyle(Style.SATELLITE_STREETS);
+
+                                }else {
+                                    Toast.makeText(getApplicationContext(), "오류 발생", Toast.LENGTH_LONG).show();
+                                }
+                                Toast.makeText(getApplicationContext(), oItems[which], Toast.LENGTH_LONG).show();
+                            }
+                        })
+                        .setCancelable(false) //뒤로가기로 취소 막기
+                        .show();
 
         }
         mDrawerlayout.closeDrawer(GravityCompat.START);

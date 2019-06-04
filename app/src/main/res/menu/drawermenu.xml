@@ -5,11 +5,16 @@
         android:title="@string/GUIDE"
         android:icon="@drawable/ic_merge_type_black_24dp"/>
 
+
     <item
         android:id="@+id/INFO"
         android:icon="@drawable/ic_info_outline_black_24dp"
         android:title="@string/INFO" />
 
+    <item
+        android:id="@+id/STYLECHANGE"
+        android:icon="@drawable/ic_palette_black_24dp"
+        android:title="@string/STYLECHANGE" />
     <item
         android:id="@+id/LOGOUT"
         android:icon="@drawable/ic_exit_to_app_black_24dp"
@@ -19,7 +24,6 @@
         android:id="@+id/EXIT"
         android:icon="@drawable/ic_power_settings_new_black_24dp"
         android:title="@string/EXIT" />
-
 
 
 </menu>

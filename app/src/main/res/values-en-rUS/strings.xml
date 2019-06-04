@@ -18,10 +18,8 @@
     <string name="Login_button">login</string>
     <string name="kor">korea</string>
     <string name="en">eng</string>
-
     <string name="etUsername">ID</string>
     <string name="etPassword">PASSWORD</string>
-
     <string name="Signup_button">JOIN</string>
     <string name="textView8">Terms and Conditions</string>
     <string name="textView9">Location based service terms and conditions</string>
@@ -38,7 +36,10 @@
     <string name="txtDestination">Input the detination.</string>
     <string name="GUIDE">GUIDE</string>
     <string name="INFO">VERSION-INFO</string>
+    <string name="STYLECHANGE">THEME</string>
     <string name="LOGOUT">LOGOUT</string>
     <string name="EXIT">EXIT</string>
+    <string name="startButton">START NAVIGATION</string>
+    <string name="btnStartLoc">Current Location</string>
 
 </resources>
