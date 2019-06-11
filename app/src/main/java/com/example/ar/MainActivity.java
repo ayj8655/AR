@@ -135,15 +135,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     // FB add
     public TextView txtname, txtemail;
-
     static int facebook_login = 0;
-
     String f_userid, f_userpw, f_username;
 
+    //bookMark
+    BookMarkList bookMarkList;
+    Button a_d;
+    String user_id, place_mark, type, buttonState;
 
-    //기본 위도 경도 36.8321 , 127.176
+    //STT
+    AutocompleteSupportFragment STT;
 
-
+    //기본 위도 경도 36.8341039, 127.1792902
+    //https://docs.mapbox.com/unity/maps/examples/world-scale-ar/ 월드스케일AR 예제 설명
+    //36.834 , 127.179
+    //36.833297 , 127.179541
 
 
 
@@ -152,6 +158,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         Mapbox.getInstance(this, getString(R.string.access_token));// 맵박스 사용하기 위한 접근 토큰 지정
         setContentView(R.layout.activity_main);
+        Log.e(TAG,"onCreate 실행");
+
+
         startButton = findViewById(R.id.startButton);
         editText =(EditText)findViewById(R.id.txtDestination);
         Button search_Button= findViewById(R.id.btnStartLoc);
@@ -161,14 +170,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onClick(View v) {
 
                 Intent intent = new Intent(getApplicationContext(), UnityPlayerActivity.class);
-                //               intent.putExtra("위도", latitude);
-                //               intent.putExtra("경도", longitude);
                 startActivity(intent);
+                //유니티 플레이어 액티비티 실행
+
                 NavigationLauncherOptions options = NavigationLauncherOptions.builder()
                         .directionsRoute(currentRoute)
                         .build();
                 // Call this method with Context from within an Activity
                 NavigationLauncher.startNavigation(MainActivity.this, options);
+                //네비게이션 실행 (MainActivity에서)
             }
         });
 
@@ -180,6 +190,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //loginSession
 
         if(loginActivity.loginId == null && loginActivity.loginPwd == null && loginActivity.nonMember == 0){
+            //로그인 액티비티의 값들을 가지고 세션이 있는지 없는지 확인.
             if(facebook_login == 1){
                 if(backgroundWorker.user_info != null){
                     String str = backgroundWorker.user_info;
@@ -199,18 +210,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 autoLogin.commit();
                 Toast.makeText(MainActivity.this, f_userid +"님 환영합니다.", Toast.LENGTH_SHORT).show();
             }
+
             else{
+
+                Log.e(TAG,"loginSession else 실행");
                 SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
                 SharedPreferences.Editor autoLogin = auto.edit();
-                autoLogin.putString("inputId", loginActivity.UseridEt.getText().toString());
-                autoLogin.putString("inputPwd", loginActivity.PasswordEt.getText().toString());
-                autoLogin.putString("inputName", backgroundWorker.user_info);
-                autoLogin.putString("inputTeg", null);
-
-                autoLogin.commit();
-                Toast.makeText(MainActivity.this, loginActivity.UseridEt.getText().toString()+"님 환영합니다.", Toast.LENGTH_SHORT).show();
+                if(loginActivity.UseridEt!=null) {
+                    autoLogin.putString("inputId", loginActivity.UseridEt.getText().toString());
+                    autoLogin.putString("inputPwd", loginActivity.PasswordEt.getText().toString());
+                    autoLogin.putString("inputName", backgroundWorker.user_info);
+                    autoLogin.putString("inputTeg", null);
+                    autoLogin.commit();
+                    Toast.makeText(MainActivity.this, loginActivity.UseridEt.getText().toString() + "님 환영합니다.", Toast.LENGTH_SHORT).show();
+                }
             }
-
         }
 
         //.loginSession
@@ -255,11 +269,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             if(loginActivity.loginName == null){
                 //처음 로그인할때
                 // txtname.setText(backgroundWorker.user_info);
+                user_id = f_userid;
                 txtname.setText(f_username);
                 txtemail.setText(f_userpw);
             }else{
                 //자동 로그인일때
                 //txtname.setText(MainActivity.loginName);
+                user_id = loginActivity.loginId;
                 if(loginActivity.loginName != null) {
                     txtname.setText(loginActivity.loginName);
                     txtemail.setText(loginActivity.loginPwd);
@@ -268,6 +284,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }else{
             if(loginActivity.loginName == null){
                 //처음 로그인할때
+                user_id = loginActivity.UseridEt.getText().toString();
                 // txtname.setText(backgroundWorker.user_info);
                 if(backgroundWorker.user_info != null) {
                     String str = backgroundWorker.user_info;
@@ -287,6 +304,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     txtname.setText(str_name);
                     txtemail.setText(str_email);
                 }
+                user_id = loginActivity.loginId;
             }
         }
 
@@ -307,6 +325,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
 
+        STT = autocompleteFragment;
         // Specify the types of place data to return.
         autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
 
@@ -314,6 +333,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
+                a_d.setText("즐겨찾기 등록");
+                buttonState = "add";
+
                 // TODO: Get info about the selected place.
                 txtView.setText(place.getName());
                 Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
@@ -345,6 +367,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             }
         });
+
+        //bookMark
+        //userid = (TextView)findViewById(R.id.userid);
+        //place = (EditText)findViewById(R.id.place);
+        a_d = (Button)findViewById(R.id.btn_add_delete);
+
+        bookMarkList.list.clear();
+
+        if(bookMarkList.ListView == 1){
+            autocompleteFragment.setText(bookMarkList.getListViewString);
+            a_d.setText("즐겨찾기 삭제");
+            buttonState = "delete";
+            bookMarkList.ListView = 0;
+        }else{
+            a_d.setText("즐겨찾기 등록");
+            buttonState = "add";
+            bookMarkList.ListView = 0;
+        }
+        //.bookMark
+
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -458,6 +500,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
+            case R.id.BOOKMARK:
+                type ="callList";
+                BackgroundWorker backgroundWorker = new BackgroundWorker(this);
+                backgroundWorker.execute(type, user_id);
+                break;
             case R.id.GUIDE:
                 Intent intent_guide = new Intent(MainActivity.this, menu_GUIDE.class);
                 startActivity(intent_guide);
@@ -527,6 +574,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mDrawerlayout.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    //즐겨찾기 등록/삭제 버튼 클릭
+    public void onMark(View view) {
+        place_mark = txtView.getText().toString();
+        type = "bookmark";
+
+        BackgroundWorker backgroundWorker = new BackgroundWorker(this);
+        backgroundWorker.execute(type, user_id, place_mark, buttonState);
+    }
+    //
 
 
     //https://docs.mapbox.com/help/tutorials/android-location-listening/

@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/BOOKMARK"
+        android:title="BOOKMARK"
+        android:icon="@drawable/ic_merge_type_black_24dp"/>
+
+    <item
         android:id="@+id/GUIDE"
         android:title="@string/GUIDE"
         android:icon="@drawable/ic_merge_type_black_24dp"/>

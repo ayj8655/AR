@@ -28,6 +28,7 @@ public class BackgroundWorker extends AsyncTask<String,Void,String> {
 
     String index = null;
     static String user_info = null;
+    static String markList = null;
 
     BackgroundWorker(Context ctx) {
         context = ctx;
@@ -40,7 +41,7 @@ public class BackgroundWorker extends AsyncTask<String,Void,String> {
                 index = "login";
                 String user_id = params[1];
                 String password = params[2];
-                URL url = new URL("http", "10.0.2.2", 80, "login.php");
+                URL url = new URL("http", "175.203.117.125", 80, "login.php");
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                 httpURLConnection.setRequestMethod("POST");
                 httpURLConnection.setDoOutput(true);
@@ -149,8 +150,7 @@ public class BackgroundWorker extends AsyncTask<String,Void,String> {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        else if(type.equals("facebookLogin")){
+        }else if(type.equals("facebookLogin")){
 
             index = "facebookLogin";
             String id = params[1];
@@ -160,6 +160,102 @@ public class BackgroundWorker extends AsyncTask<String,Void,String> {
             String result = "";
             result = id + ":" + email + ":" +name;
             return result;
+        }else if (type.equals("bookmark")) {
+            try {
+                index = "bookmark";
+                String user_id = params[1];
+                String place = params[2];
+                String buttonState = params[3];
+                if(buttonState.equals("add")){
+                    URL url = new URL("http", "10.0.2.2", 80, "bookmark.php");
+                    HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                    httpURLConnection.setRequestMethod("POST");
+                    httpURLConnection.setDoOutput(true);
+                    httpURLConnection.setDoInput(true);
+                    OutputStream outputStream = httpURLConnection.getOutputStream();
+                    BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+                    String post_data = URLEncoder.encode("user_id", "UTF-8") + "=" + URLEncoder.encode(user_id, "UTF-8") + "&"
+                            + URLEncoder.encode("place", "UTF-8") + "=" + URLEncoder.encode(place, "UTF-8");
+                    bufferedWriter.write(post_data);
+                    bufferedWriter.flush();
+                    bufferedWriter.close();
+                    outputStream.close();
+                    InputStream inputStream = httpURLConnection.getInputStream();
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+                    String result = "";
+                    String line = "";
+                    while ((line = bufferedReader.readLine()) != null) {
+                        result += line;
+                    }
+                    bufferedReader.close();
+                    inputStream.close();
+                    httpURLConnection.disconnect();
+                    return result;
+                }else{
+                    index = "bookmark_delete";
+                    URL url = new URL("http", "10.0.2.2", 80, "bookmark_delete.php");
+                    HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                    httpURLConnection.setRequestMethod("POST");
+                    httpURLConnection.setDoOutput(true);
+                    httpURLConnection.setDoInput(true);
+                    OutputStream outputStream = httpURLConnection.getOutputStream();
+                    BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+                    String post_data = URLEncoder.encode("user_id", "UTF-8") + "=" + URLEncoder.encode(user_id, "UTF-8") + "&"
+                            + URLEncoder.encode("place", "UTF-8") + "=" + URLEncoder.encode(place, "UTF-8");
+                    bufferedWriter.write(post_data);
+                    bufferedWriter.flush();
+                    bufferedWriter.close();
+                    outputStream.close();
+                    InputStream inputStream = httpURLConnection.getInputStream();
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+                    String result = "";
+                    String line = "";
+                    while ((line = bufferedReader.readLine()) != null) {
+                        result += line;
+                    }
+                    bufferedReader.close();
+                    inputStream.close();
+                    httpURLConnection.disconnect();
+                    return result;
+                }
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else if(type.equals("callList")) {
+            try {
+                index = "callList";
+                String user_id = params[1];
+                URL url = new URL("http", "10.0.2.2", 80, "bookmark_list.php");
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setDoOutput(true);
+                httpURLConnection.setDoInput(true);
+                OutputStream outputStream = httpURLConnection.getOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+                String post_data = URLEncoder.encode("user_id", "UTF-8") + "=" + URLEncoder.encode(user_id, "UTF-8");
+                bufferedWriter.write(post_data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                outputStream.close();
+                InputStream inputStream = httpURLConnection.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+                String result = "";
+                String line = "";
+                while ((line = bufferedReader.readLine()) != null) {
+                    result += line;
+                }
+                bufferedReader.close();
+                inputStream.close();
+                httpURLConnection.disconnect();
+                return result;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
@@ -205,7 +301,27 @@ public class BackgroundWorker extends AsyncTask<String,Void,String> {
             user_info = result;
             Intent i = new Intent(context, MainActivity.class);
             context.startActivity(i);
+        }else if(index.equals("bookmark") || index.equals("bookmark_delete")) {
+            alertDialog.setMessage(result);
+            alertDialog.show();
+            if(index.equals("bookmark_delete")){
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent intent = new Intent(context, MainActivity.class);
+                        context.startActivity(intent);
+                    }
+                }, 500);
+
+            }
+        }else if(index.equals("callList")){
+            markList = result;
+            Intent list = new Intent(context, BookMarkList.class);
+            context.startActivity(list);
         }
+
+
 
     }
 

@@ -131,7 +131,12 @@ public class UnityPlayerActivity extends Activity
 
     public void aaaaa(View view) {
         Toast.makeText(getApplicationContext(), String.format("            내위치 \n위도 : " + MainActivity.La + "\n경도 : "+MainActivity.Lo + "\n "), Toast.LENGTH_SHORT).show();
-        drawRoute(MainActivity.currentRoute);
+     //   finish();
+     //   Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        //               intent.putExtra("위도", latitude);
+        //               intent.putExtra("경도", longitude);
+      //  startActivity(intent);
+        //drawRoute(MainActivity.currentRoute);
     }
 
 

@@ -93,7 +93,7 @@
             android:id="@+id/txtDestination"
             android:layout_width="194dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="44dp"
+            android:layout_marginTop="24dp"
             android:layout_marginEnd="11dp"
             android:ems="10"
             android:hint="목적지를 입력하세요"
@@ -151,6 +151,19 @@
             mapbox:mapbox_cameraZoom="13">
 
         </com.mapbox.mapboxsdk.maps.MapView>
+
+        <Button
+            android:id="@+id/btn_add_delete"
+            android:layout_width="65dp"
+            android:layout_height="56dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/button_background"
+            android:onClick="onMark"
+            android:text="즐겨찾기 등록"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
 
     </android.support.constraint.ConstraintLayout>
 
