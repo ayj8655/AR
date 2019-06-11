@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public static double Lo;          // longitude
 
     //String TAG = "placeautocomplete";
-    TextView txtView;
+    static TextView txtView;
 
     // FB add
     public TextView txtname, txtemail;
@@ -139,12 +139,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     String f_userid, f_userpw, f_username;
 
     //bookMark
-    BookMarkList bookMarkList;
-    Button a_d;
-    String user_id, place_mark, type, buttonState;
+    static BookMarkList bookMarkList;
+    static Button a_d;
+    static String user_id, place_mark, type, buttonState;
 
     //STT
-    AutocompleteSupportFragment STT;
+    static AutocompleteSupportFragment STT;
 
     //기본 위도 경도 36.8341039, 127.1792902
     //https://docs.mapbox.com/unity/maps/examples/world-scale-ar/ 월드스케일AR 예제 설명
@@ -375,16 +375,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         bookMarkList.list.clear();
 
-        if(bookMarkList.ListView == 1){
-            autocompleteFragment.setText(bookMarkList.getListViewString);
-            a_d.setText("즐겨찾기 삭제");
-            buttonState = "delete";
-            bookMarkList.ListView = 0;
-        }else{
-            a_d.setText("즐겨찾기 등록");
-            buttonState = "add";
-            bookMarkList.ListView = 0;
-        }
         //.bookMark
 
     }
@@ -397,7 +387,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             if(resultCode == RESULT_OK && data != null){
                 ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                 editText.setText(result.get(0));
-
+                STT.setText(result.get(0));
                 startButton.setEnabled(true);
                 getPointFromGeoCoder(editText.getText().toString());
                 Point origin = Point.fromLngLat(Lo,La);
@@ -442,39 +432,39 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     @Override
                     public void onClick(DialogInterface dialog, int which)
                     {
-                         if (which == 0 ) {
-                             //도보 길찾기 진행
-                             getPointFromGeoCoder(editText.getText().toString());
-                             Point origin = Point.fromLngLat(Lo,La);
-                             Point destination = Point.fromLngLat(destinationX, destinationY);
-                             getRoute_walking(origin,destination);//예상 시간 및 위도 경도 출력
-                             getRoute_navi_walking(origin,destination);//네비게이션 정보 저장
+                        if (which == 0 ) {
+                            //도보 길찾기 진행
+                            getPointFromGeoCoder(editText.getText().toString());
+                            Point origin = Point.fromLngLat(Lo,La);
+                            Point destination = Point.fromLngLat(destinationX, destinationY);
+                            getRoute_walking(origin,destination);//예상 시간 및 위도 경도 출력
+                            getRoute_navi_walking(origin,destination);//네비게이션 정보 저장
 
-                             startButton.setEnabled(true);
+                            startButton.setEnabled(true);
 
-                         } else if ( which == 1) {
+                        } else if ( which == 1) {
                             //자전거 길찾기 진행
-                             getPointFromGeoCoder(editText.getText().toString());
-                             Point origin = Point.fromLngLat(Lo,La);
-                             Point destination = Point.fromLngLat(destinationX, destinationY);
-                             getRoute_CYCLING(origin,destination);//예상 시간 및 위도 경도 출력
-                             getRoute_navi_CYCLING(origin,destination);//네비게이션 정보 저장
+                            getPointFromGeoCoder(editText.getText().toString());
+                            Point origin = Point.fromLngLat(Lo,La);
+                            Point destination = Point.fromLngLat(destinationX, destinationY);
+                            getRoute_CYCLING(origin,destination);//예상 시간 및 위도 경도 출력
+                            getRoute_navi_CYCLING(origin,destination);//네비게이션 정보 저장
 
-                             startButton.setEnabled(true);
+                            startButton.setEnabled(true);
 
-                         } else if (which == 2) {
-                             //자동차 길찾기 진행
-                             getPointFromGeoCoder(editText.getText().toString());
-                             Point origin = Point.fromLngLat(Lo,La);
-                             Point destination = Point.fromLngLat(destinationX, destinationY);
-                             getRoute_DRIVING(origin,destination);//예상 시간 및 위도 경도 출력
-                             getRoute_navi_DRIVING(origin,destination);//네비게이션 정보 저장
+                        } else if (which == 2) {
+                            //자동차 길찾기 진행
+                            getPointFromGeoCoder(editText.getText().toString());
+                            Point origin = Point.fromLngLat(Lo,La);
+                            Point destination = Point.fromLngLat(destinationX, destinationY);
+                            getRoute_DRIVING(origin,destination);//예상 시간 및 위도 경도 출력
+                            getRoute_navi_DRIVING(origin,destination);//네비게이션 정보 저장
 
-                             startButton.setEnabled(true);
+                            startButton.setEnabled(true);
 
-                         } else {
-                             Toast.makeText(getApplicationContext(), "오류 발생", Toast.LENGTH_LONG).show();
-                         }
+                        } else {
+                            Toast.makeText(getApplicationContext(), "오류 발생", Toast.LENGTH_LONG).show();
+                        }
 
 
                         Toast.makeText(getApplicationContext(), oItems[which], Toast.LENGTH_LONG).show();

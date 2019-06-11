@@ -13,6 +13,7 @@ import java.util.TreeSet;
 
 public class BookMarkList extends AppCompatActivity {
 
+    MainActivity mainActivity;
     BackgroundWorker backgroundWorker;
     static ArrayList<String> list = new ArrayList<String>();
     static ArrayList<String> list3 = new ArrayList<String>();
@@ -24,17 +25,16 @@ public class BookMarkList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_mark_list);
 
+        list.clear();
         String str = backgroundWorker.markList;
-        if(str != null){
-            String[] array = str.split(":");
 
-            for(int i=1 ; i< Integer.parseInt(array[0])+1; i++){
-                list.add(array[i]);
-            }
-            TreeSet<String> list2 = new TreeSet<String>(list); //TreeSet에 list데이터 삽입
-            list3 = new ArrayList<String>(list2); //중복이 제거된 HachSet을 다시 ArrayList에 삽입
+        String[] array = str.split(":");
+
+        for(int i=1 ; i< Integer.parseInt(array[0])+1; i++){
+            list.add(array[i]);
         }
-
+        TreeSet<String> list2 = new TreeSet<String>(list); //TreeSet에 list데이터 삽입
+        list3 = new ArrayList<String>(list2); //중복이 제거된 HachSet을 다시 ArrayList에 삽입
 
 
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, list3) ;
@@ -50,10 +50,12 @@ public class BookMarkList extends AppCompatActivity {
                 getListViewString = (String) parent.getItemAtPosition(position) ;
                 ListView =1;
 
-
-                Intent intent = new Intent(BookMarkList.this, MainActivity.class);
-                startActivity(intent);
-
+                mainActivity.STT.setText(mainActivity.bookMarkList.getListViewString);
+                mainActivity.txtView.setText(mainActivity.bookMarkList.getListViewString);
+                mainActivity.a_d.setText("즐겨찾기 삭제");
+                mainActivity.buttonState = "delete";
+                mainActivity.bookMarkList.ListView = 0;
+                finish();
             }
         }) ;
     }

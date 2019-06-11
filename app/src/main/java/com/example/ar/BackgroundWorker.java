@@ -22,12 +22,13 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 public class BackgroundWorker extends AsyncTask<String,Void,String> {
+    MainActivity mainActivity;
     LoginActivity loginActivity;
     Context context;
     AlertDialog alertDialog;
 
     String index = null;
-    static String user_info = null;
+    static String user_info;
     static String markList = null;
 
     BackgroundWorker(Context ctx) {
@@ -82,7 +83,7 @@ public class BackgroundWorker extends AsyncTask<String,Void,String> {
                 String phone = params[6];
                 String agree = params[7];
 
-                URL url = new URL("http", "10.0.2.2", 80, "register.php");
+                URL url = new URL("http", "175.203.117.125", 80, "register.php");
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                 httpURLConnection.setRequestMethod("POST");
                 httpURLConnection.setDoOutput(true);
@@ -122,7 +123,7 @@ public class BackgroundWorker extends AsyncTask<String,Void,String> {
                 index = "get_userInfo";
                 String id = params[1];
 
-                URL url = new URL("http", "10.0.2.2", 80, "user_info.php");
+                URL url = new URL("http", "175.203.117.125", 80, "user_info.php");
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                 httpURLConnection.setRequestMethod("POST");
                 httpURLConnection.setDoOutput(true);
@@ -167,7 +168,7 @@ public class BackgroundWorker extends AsyncTask<String,Void,String> {
                 String place = params[2];
                 String buttonState = params[3];
                 if(buttonState.equals("add")){
-                    URL url = new URL("http", "10.0.2.2", 80, "bookmark.php");
+                    URL url = new URL("http", "175.203.117.125", 80, "bookmark.php");
                     HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                     httpURLConnection.setRequestMethod("POST");
                     httpURLConnection.setDoOutput(true);
@@ -193,7 +194,7 @@ public class BackgroundWorker extends AsyncTask<String,Void,String> {
                     return result;
                 }else{
                     index = "bookmark_delete";
-                    URL url = new URL("http", "10.0.2.2", 80, "bookmark_delete.php");
+                    URL url = new URL("http", "175.203.117.125", 80, "bookmark_delete.php");
                     HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                     httpURLConnection.setRequestMethod("POST");
                     httpURLConnection.setDoOutput(true);
@@ -228,7 +229,7 @@ public class BackgroundWorker extends AsyncTask<String,Void,String> {
             try {
                 index = "callList";
                 String user_id = params[1];
-                URL url = new URL("http", "10.0.2.2", 80, "bookmark_list.php");
+                URL url = new URL("http", "175.203.117.125", 80, "bookmark_list.php");
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                 httpURLConnection.setRequestMethod("POST");
                 httpURLConnection.setDoOutput(true);
@@ -306,14 +307,9 @@ public class BackgroundWorker extends AsyncTask<String,Void,String> {
             alertDialog.show();
             if(index.equals("bookmark_delete")){
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Intent intent = new Intent(context, MainActivity.class);
-                        context.startActivity(intent);
-                    }
-                }, 500);
-
+                mainActivity.a_d.setText("즐겨찾기 등록");
+                mainActivity.buttonState = "add";
+                mainActivity.bookMarkList.ListView = 0;
             }
         }else if(index.equals("callList")){
             markList = result;
