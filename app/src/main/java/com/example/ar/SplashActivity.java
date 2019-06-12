@@ -16,7 +16,7 @@ public class SplashActivity extends AppCompatActivity {
         }catch (InterruptedException e){
             e.printStackTrace();
         }
-    //4000 대기 후 로그인 액티비티 실행
+    //1000 대기 후 로그인 액티비티 실행
         startActivity(new Intent(this, LoginActivity.class));
         finish();
     }

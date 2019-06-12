@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     LoginActivity loginActivity;
     BackgroundWorker backgroundWorker;
 
+    //네비게이션 바 설정
     private DrawerLayout mDrawerlayout;
     private ActionBarDrawerToggle mToggle;
 
@@ -109,19 +110,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     // Variables needed to listen to location updates
     private MainActivityLocationCallback callback = new MainActivityLocationCallback(this);
-    private static final String Tag = "MainActivity";
+    private static final String Tag = "MainActivity_location";
 
     //navigation
-    private Location originLocation;
     private Point originPosition;
     private Point destinatonPosition;
     private Marker destinationMarker;
     private Button startButton, arButton;
     private NavigationMapRoute navigationMapRoute;
-    private NavigationRoute navigationRoute;
     public static DirectionsRoute currentRoute;
     private MapboxDirections client;
-    private  static final String TAG = "MainActivity";
+    private  static final String TAG = "MainActivity_navigation";
 
     EditText editText;
 
@@ -147,8 +146,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     //STT
     static AutocompleteSupportFragment STT;
 
-    //기본 위도 경도 36.8341039, 127.1792902
-    //https://docs.mapbox.com/unity/maps/examples/world-scale-ar/ 월드스케일AR 예제 설명
+    //한누리관 위도 경도 36.8341039, 127.1792902
     //36.834 , 127.179
     //36.833297 , 127.179541
 
@@ -162,18 +160,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Log.e(TAG,"onCreate 실행");
 
 
-        startButton = findViewById(R.id.startButton);
-        arButton = findViewById(R.id.arButton);
+        startButton = findViewById(R.id.startButton);//네비게이션 스타트 버튼
+        arButton = findViewById(R.id.arButton);     //ar스타트 버튼
         editText =(EditText)findViewById(R.id.txtDestination);
         Button search_Button= findViewById(R.id.btnStartLoc);
 
         startButton.setOnClickListener(new View.OnClickListener() { //네비게이션 버튼 나타내기+ar 실행하기
             @Override
             public void onClick(View v) {
+                startButton.setEnabled(false);
 
-                Intent intent = new Intent(getApplicationContext(), UnityPlayerActivity.class);
-                startActivity(intent);
-                //유니티 플레이어 액티비티 실행
 
                 NavigationLauncherOptions options = NavigationLauncherOptions.builder()
                         .directionsRoute(currentRoute)
@@ -230,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         //.loginSession
-
+        //내 위치로 카메라 이동 + 위도 경도 토스트 메세지
         search_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -240,13 +236,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         .bearing(180) // Rotate the camera , 카메라 방향(북쪽이 0) 북쪽부터 시계방향으로 측정
                         .tilt(0) // Set the camera tilt , 각도
                         .build(); // Creates a CameraPosition from the builder
-
-                //https://docs.mapbox.com/android/maps/overview/camera/
-
                 //카메라 움직이기
                 mapboxMap.animateCamera(CameraUpdateFactory
                         .newCameraPosition(position), 7000);
-
                 Toast.makeText(getApplicationContext(), String.format("            내위치 \n위도 : " + La + "\n경도 : "+Lo), Toast.LENGTH_SHORT).show();
             }
         });
@@ -254,7 +246,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mDrawerlayout = (DrawerLayout) findViewById(R.id.drawer);
         NavigationView navigationView = findViewById(R.id.navigationView2);
         navigationView.setNavigationItemSelectedListener(this);
-
         mToggle = new ActionBarDrawerToggle(this, mDrawerlayout, R.string.open, R.string.close);
         mDrawerlayout.addDrawerListener(mToggle);
         mToggle.syncState();
@@ -262,10 +253,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //네비게이션바에 로그인 정보
         View nav_header_view = navigationView.getHeaderView(0);
-
         txtname = nav_header_view.findViewById(R.id.txtName);
         txtemail = nav_header_view.findViewById(R.id.txtEmail);
-
 
         if(facebook_login == 1){
             if(loginActivity.loginName == null){
@@ -317,20 +306,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Button search = (Button)findViewById(R.id.btnSearch);
         search.bringToFront();
         txtView = findViewById(R.id.txtDestination);
-
         // Initialize Places.
         Places.initialize(getApplicationContext(), "AIzaSyA1zuxMWkupxfZ7ePhoFlII-TlRs6-wFTw");
         // Create a new Places client instance.
         PlacesClient placesClient = Places.createClient(this);
-
         // Initialize the AutocompleteSupportFragment.
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
-
         STT = autocompleteFragment;
         // Specify the types of place data to return.
         autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
-
         // Set up a PlaceSelectionListener to handle the response.
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
@@ -356,7 +341,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         Button sttButton = (Button)findViewById(R.id.btn_stt);
         sttButton.bringToFront();
-
         sttButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -368,7 +352,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }catch (ActivityNotFoundException a){
                     Toast.makeText(getApplicationContext(),"Intent problem", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
 
@@ -377,7 +360,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //place = (EditText)findViewById(R.id.place);
         btn_add = (Button)findViewById(R.id.btn_add);
         btn_delete = (Button)findViewById(R.id.btn_delete);
-
         if(loginActivity.nonMember == 1){
             btn_add.setEnabled(false);
             btn_delete.setEnabled(false);
@@ -386,14 +368,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             btn_add.setEnabled(true);
             btn_delete.setEnabled(true);
         }
-
         bookMarkList.list.clear();
-
         //.bookMark
 
     }
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //onCreate 끝
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -413,8 +393,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         if(mToggle.onOptionsItemSelected(item)){
@@ -423,24 +401,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
+    @Override   //위치권한
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    @Override
+    @Override   //권한 필요할때 나오는 메세지
     public void onExplanationNeeded(List<String> permissionsToExplain) {
         Toast.makeText(this, R.string.user_location_permission_explanation, Toast.LENGTH_LONG).show();
     }
 
 
-    public void showDialog2(View _view) //검색시 다이얼로그 띄우기
+    public void showDialog2(View _view) //검색버튼 클릭시 다이얼로그
     {
         final CharSequence[] oItems = {"도보", "자전거", "자동차"};
-
         AlertDialog.Builder oDialog = new AlertDialog.Builder(this,
                 android.R.style.Theme_DeviceDefault_Light_Dialog_Alert);
-
         oDialog.setTitle("방법을 선택하세요")
                 .setItems(oItems, new DialogInterface.OnClickListener()
                 {
@@ -482,15 +458,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         } else {
                             Toast.makeText(getApplicationContext(), "오류 발생", Toast.LENGTH_LONG).show();
                         }
-
-
-                        Toast.makeText(getApplicationContext(), oItems[which], Toast.LENGTH_LONG).show();
                     }
                 })
                 .setCancelable(false) //뒤로가기로 취소 막기
                 .show();
     }
-
 
     @Override
     public void onPermissionResult(boolean granted) {
@@ -538,12 +510,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 finish();
                 android.os.Process.killProcess(android.os.Process.myPid());
                 break;
-            case R.id.STYLECHANGE:
+            case R.id.STYLECHANGE:  //맵 스타일 지정
                 final CharSequence[] oItems = {"STREETS", "DARK", "LIGHT", "OUTDOORS", "SATELLITE", "SATELLITE_STREETS"};
-
                 AlertDialog.Builder oDialog = new AlertDialog.Builder(this,
                         android.R.style.Theme_DeviceDefault_Light_Dialog_Alert);
-
                 oDialog.setTitle("스타일을 지정하세요")
                         .setItems(oItems, new DialogInterface.OnClickListener()
                         {
@@ -571,12 +541,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 }else {
                                     Toast.makeText(getApplicationContext(), "오류 발생", Toast.LENGTH_LONG).show();
                                 }
-                                Toast.makeText(getApplicationContext(), oItems[which], Toast.LENGTH_LONG).show();
                             }
                         })
                         .setCancelable(false) //뒤로가기로 취소 막기
                         .show();
-
         }
         mDrawerlayout.closeDrawer(GravityCompat.START);
         return true;
@@ -586,7 +554,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMark(View view) {
         place_mark = txtView.getText().toString();
         type = "bookmark";
-
         buttonState = "add";
         BackgroundWorker backgroundWorker = new BackgroundWorker(this);
         backgroundWorker.execute(type, user_id, place_mark, buttonState);
@@ -595,47 +562,39 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMark2(View view) {
         place_mark = txtView.getText().toString();
         type = "bookmark";
-
         buttonState = "delete";
         BackgroundWorker backgroundWorker = new BackgroundWorker(this);
         backgroundWorker.execute(type, user_id, place_mark, buttonState);
     }
 
     public void onClickAR(View view) {
+        arButton.setEnabled(false);
         Intent intent = new Intent(getApplicationContext(), UnityPlayerActivity.class);
         startActivity(intent);
         //유니티 플레이어 액티비티 실행
     }
-    //
-
 
     //https://docs.mapbox.com/help/tutorials/android-location-listening/
     //안드로이드 기기 위치 추적
     //현재 위치 얻어오는 콜백
     class MainActivityLocationCallback implements LocationEngineCallback<LocationEngineResult> {
-
         private final WeakReference<MainActivity> activityWeakReference;
-
         MainActivityLocationCallback(MainActivity activity) {
             this.activityWeakReference = new WeakReference<>(activity);
         }
         /**
          * The LocationEngineCallback interface's method which fires when the device's location has changed.
-         *
          * @param result the LocationEngineResult object which has the last known location within it.
          */
         @Override
         public void onSuccess(LocationEngineResult result) {
             Log.e(TAG,"onSuccess 실행");
             MainActivity activity = activityWeakReference.get();
-
             if (activity != null) {
                 Location location = result.getLastLocation();
-
                 if (location == null) {
                     return;
                 }
-
                 // Create a Toast which displays the new location's coordinates
                 La = result.getLastLocation().getLatitude();
                 Lo = result.getLastLocation().getLongitude();
@@ -703,7 +662,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Toast.makeText(getApplicationContext(), String.format("예상 시간 : " + String.valueOf(time)+" 분 \n" +
                         "목적지 거리 : " +distants+ " km"), Toast.LENGTH_LONG).show();
                 // Draw the route on the map
-                drawRoute(currentRoute);
+               // drawRoute(currentRoute);
             }
             @Override
             public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
@@ -752,7 +711,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Toast.makeText(getApplicationContext(), String.format("예상 시간 : " + String.valueOf(time)+" 분 \n" +
                         "목적지 거리 : " +distants+ " km"), Toast.LENGTH_LONG).show();
                 // Draw the route on the map
-                drawRoute(currentRoute);
+               // drawRoute(currentRoute);
             }
             @Override
             public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
@@ -801,7 +760,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Toast.makeText(getApplicationContext(), String.format("예상 시간 : " + String.valueOf(time)+" 분 \n" +
                         "목적지 거리 : " +distants+ " km"), Toast.LENGTH_LONG).show();
                 // Draw the route on the map
-                drawRoute(currentRoute);
+                //drawRoute(currentRoute);
             }
             @Override
             public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
@@ -811,7 +770,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
-    private void drawRoute(DirectionsRoute route) {
+    private void drawRoute(DirectionsRoute route) { //지오코딩된 내용을 바탕으로 포인트에 값 저장
         Log.e(TAG,"drawRoute 실행");
         // Convert LineString coordinates into LatLng[]
         LineString lineString = LineString.fromPolyline(route.geometry(), PRECISION_6);
@@ -821,7 +780,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             points[i] = new LatLng(
                     coordinates.get(i).latitude(),
                     coordinates.get(i).longitude());
-            Log.e(TAG, "Error: " + points[i]);
+           // Log.e(TAG, "Error: " + points[i]);
         }
         // Draw Points on MapView
 //        mapboxMap.clear();
@@ -832,12 +791,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
         Log.e(Tag, "onMapReady");
         this.mapboxMap = mapboxMap;
-
-        mapboxMap.addOnMapClickListener(this);
-
-
+        mapboxMap.addOnMapClickListener(this);//맵 클릭 리스너 등록
         //↓ 초기 지도 스타일 지정
-        mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
+        mapboxMap.setStyle(getString(R.string.navigation_guidance_day), new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
                 enableLocationComponent(style);
@@ -889,11 +845,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void initLocationEngine() {
         Log.e(TAG,"initLocationEngine 실행");
         locationEngine = LocationEngineProvider.getBestLocationEngine(this);
-
         LocationEngineRequest request = new LocationEngineRequest.Builder(DEFAULT_INTERVAL_IN_MILLISECONDS)
                 .setPriority(LocationEngineRequest.PRIORITY_HIGH_ACCURACY)
                 .setMaxWaitTime(DEFAULT_MAX_WAIT_TIME).build();
-
         locationEngine.requestLocationUpdates(request, callback, getMainLooper());
         locationEngine.getLastLocation(callback);
     }
@@ -954,7 +908,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (locationEngine != null) {
             locationEngine.removeLocationUpdates(callback);
         }
-
         mapView.onDestroy();
     }
 
@@ -970,19 +923,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (destinationMarker != null) {
             mapboxMap.removeMarker(destinationMarker);
         }
-
         destinationMarker = mapboxMap.addMarker(new MarkerOptions().position(point));//마커 추가
         destinatonPosition = Point.fromLngLat(point.getLongitude(), point.getLatitude());//클릭한곳의 좌표
         originPosition = Point.fromLngLat(Lo, La);//현재 좌표
-
         getRoute_walking(originPosition, destinatonPosition);   //도보 길찾기
         getRoute_navi_walking(originPosition, destinatonPosition);//도보 네비게이션
         startButton.setEnabled(true);   //네비게이션 버튼 활성화
-        arButton.setEnabled(true);
-
-
+        arButton.setEnabled(true);      //AR 버튼 활성화
         return false;
     }
+
     private void getRoute_navi_walking (Point origin, Point destinaton) {
         NavigationRoute.builder(this).accessToken(Mapbox.getAccessToken())
                 .profile(DirectionsCriteria.PROFILE_WALKING)//도보 길찾기
@@ -1005,7 +955,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                         navigationMapRoute.addRoute(currentRoute);
                     }
-
                     @Override
                     public void onFailure(Call<DirectionsResponse> call, Throwable t) {
                     }
@@ -1071,6 +1020,4 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 });
     }
-
-
 }

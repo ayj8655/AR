@@ -20,7 +20,7 @@
         <item name="routeSevereCongestionColor">@color/mapboxPink</item>
         <item name="routeShieldColor">@color/mapboxWhite</item>
         <!-- Scales -->
-        <item name="routeScale">1.0</item>
+        <item name="routeScale">0.5</item>
     </style>
 
     <style name="NavigationView" parent="Theme.AppCompat.NoActionBar">

@@ -35,6 +35,7 @@ public class UnityPlayerActivity extends Activity
         mUnityPlayer = new UnityPlayer(this);
         setContentView(R.layout.activity_unity_player);
 
+        //유니티 화면 프레임레이아웃으로 설정
         FrameLayout frameLayout = (FrameLayout)findViewById(R.id.unity_player_layout);
         frameLayout.addView(mUnityPlayer.getView());
         mUnityPlayer.requestFocus();
@@ -131,32 +132,5 @@ public class UnityPlayerActivity extends Activity
 
     public void aaaaa(View view) {
         Toast.makeText(getApplicationContext(), String.format("            내위치 \n위도 : " + MainActivity.La + "\n경도 : "+MainActivity.Lo + "\n "), Toast.LENGTH_SHORT).show();
-     //   finish();
-     //   Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-        //               intent.putExtra("위도", latitude);
-        //               intent.putExtra("경도", longitude);
-      //  startActivity(intent);
-        //drawRoute(MainActivity.currentRoute);
     }
-
-
-    private void drawRoute(DirectionsRoute route) {
-        Log.e("ayj","유니티 drawRoute 실행");
-        // Convert LineString coordinates into LatLng[]
-        LineString lineString = LineString.fromPolyline(route.geometry(), PRECISION_6);
-        List<Point> coordinates = lineString.coordinates();
-        LatLng[] points = new LatLng[coordinates.size()];
-        for (int i = 0; i < coordinates.size(); i++) {
-            points[i] = new LatLng(
-                    coordinates.get(i).latitude(),
-                    coordinates.get(i).longitude());
-            Log.e("ayj", "Error: " + points[i]);
-        }
-        // Draw Points on MapView
-//        mapboxMap.clear();
-//      mapboxMap.addPolyline(new PolylineOptions().add(points).color(Color.parseColor("#3bb2d0")).width(5));
-    }
-
-
-
 }

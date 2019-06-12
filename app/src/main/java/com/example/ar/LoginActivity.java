@@ -45,11 +45,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 //로그인
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
-
-    private Button btn_en, btn_ko, btn_jp;
+    //언어 설정
+    private Button btn_en, btn_ko;
     private Locale myLocale;
 
     MainActivity mainActivity;
+
     //login
     static EditText UseridEt, PasswordEt;
     static String loginId, loginPwd, loginName, loginTeg;
@@ -68,16 +69,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private final int PERMISSIONS_ACCESS_COARSE_LOCATION = 1001;
     private boolean isAccessFineLocation = false;
     private boolean isAccessCoarseLocation = false;
-    private boolean isPermission = false;
-    // GPSTracker class
-
-    public static final int REQUEST_CODE_MAIN=101;
-
-    double latitude;
-    double longitude;
 
     static int nonMember = 0;
-    static String facebook_status = "0";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +83,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_login);
-
+        //언어 정보 불러오기
         loadLocale();
 
 
@@ -108,10 +101,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         loginTeg = auto.getString("inputTeg", null);
 
         nonMember = 0;
-     /*   if(facebook_login == 0){
-            mainActivity.facebook_login = 0;
-        }*/
-
         if(facebook_login == 0){
             mainActivity.facebook_login = 0;
         }
@@ -152,92 +141,24 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onSuccess(LoginResult loginResult) {
                 mainActivity.facebook_login = 1;
             }
-
             @Override
             public void onCancel() {
-
             }
-
             @Override
             public void onError(FacebookException error) {
-
             }
         });
 
-        /* facebook
-        printKeyHash();
-
-        AccessToken accessToken = AccessToken.getCurrentAccessToken();
-        boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
-
-        callbackManager = CallbackManager.Factory.create();
-
-        LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
-        loginButton.setReadPermissions("email");
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
-                    @Override
-                    public void onCompleted(JSONObject object, GraphResponse response) {
-                        Log.d("response", response.toString());
-
-                        try{
-                            String email = object.getString("email");
-                            String name = object.getString("name");
-                            String gender = object.getString("gender");
-
-                            Log.d("TAG", "페이스북 이메일→"+email);
-                            Log.d("TAG", "페이스북 이름→"+name);
-                            Log.d("TAG", "페이스북 성별→"+gender);
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-
-                Bundle parameters = new Bundle();
-                parameters.putString("fields", "id,name,email,gender,birthday");
-                request.setParameters(parameters);
-                request.executeAsync();
-
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-            }
-
-            @Override
-            public void onCancel() {
-                // App code
-            }
-
-            @Override
-            public void onError(FacebookException exception) {
-                // App code
-            }
-        });
-
-        // If already login
-        if(AccessToken.getCurrentAccessToken() != null) {
-            // Just set User ID
-
-        }
-         .facebook
-        */
-
-        // gps info
+        // 비회원 로그인
         btnShowLocation = (TextView) findViewById(R.id.Naver_button);
-        //네이버 버튼으로 지도 실행
         btnShowLocation.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
                 nonMember = 1;
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                //               intent.putExtra("위도", latitude);
-                //               intent.putExtra("경도", longitude);
                 startActivity(intent);
             }
         });
-        // .gps info
+        // 비회원 로그인
     }
 
     // facebook
@@ -255,10 +176,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             e.printStackTrace();
         }
     }
-
-    /*public void facebook_OnClick(View view) {
-        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
-    }*/
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
@@ -326,7 +243,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
     // .facebook
 
-    public void Login_onClick(View v){  //온클릭으로 인텐트
+    public void Login_onClick(View v){
         String username = UseridEt.getText().toString();
         String password = PasswordEt.getText().toString();
         String type = "login";
@@ -334,55 +251,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         backgroundWorker.execute(type, username, password);
     }
 
-
+    //회원가입 액티비티로
     public void Signup_onClick(View v){
         Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
         startActivity(intent);
     }
 
-    // gps info
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                           int[] grantResults) {
-        if (requestCode == PERMISSIONS_ACCESS_FINE_LOCATION
-                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-            isAccessFineLocation = true;
-
-        } else if (requestCode == PERMISSIONS_ACCESS_COARSE_LOCATION
-                && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-
-            isAccessCoarseLocation = true;
-        }
-
-        if (isAccessFineLocation && isAccessCoarseLocation) {
-            isPermission = true;
-        }
-    }
-
-    // 전화번호 권한 요청
-    private void callPermission() {
-        // Check the SDK version and whether the permission is already granted or not.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            requestPermissions(
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSIONS_ACCESS_FINE_LOCATION);
-
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED){
-
-            requestPermissions(
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                    PERMISSIONS_ACCESS_COARSE_LOCATION);
-        } else {
-            isPermission = true;
-        }
-    }
-
+    //버튼 클릭으로 언어 설정 스위치 케이스
     @Override
     public void onClick(View v) {
         String lang = "ko";
@@ -398,12 +273,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
         changeLang(lang);
         Intent intent = getIntent();
-        finish();
+        finish();//한번 닫고 다시 실행
         startActivity(intent);
 
     }
-    // .gps info
-
     public void loadLocale()
     {
         Log.e("A","loadLocale 실행");

@@ -1,5 +1,6 @@
 package com.example.ar;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -288,7 +289,7 @@ public class BackgroundWorker extends AsyncTask<String,Void,String> {
                 new Handler().postDelayed(new Runnable(){
                     @Override
                     public void run(){
-                        Intent i = new Intent(context, MainActivity.class);
+                        Intent i = new Intent(context, LoginActivity.class);
                         context.startActivity(i);
                     }
                 },1000);//약 1초뒤에 run() 내부작업 실행
