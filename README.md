@@ -320,6 +320,159 @@ session 등록은 session에 저장된 id 와 password값이 null이면서 nonMe
 ```java
 if(loginActivity.loginId == null && loginActivity.loginPwd == null && loginActivity.nonMember == 0)
 ```
+<br>
+
+<!--facebook 로그인 연동 -->
+# facebook 로그인 API
+## facebook API
+1. Facebook for Developers https://developers.facebook.com/
+1. 로그인 Login
+1. 내 앱>새 앱 추가>...>문서>비즈니스 도구-Facebook Login>안드로이드<br>
+My Apps>Add New App>...>Docs>Business Tools-Facebook Login>Android
+#### Facebook SDK 통합  Integrate the Facebook SDK
+1. Android Studio> Gradle Scripts> build.gradle(Project)를 연 후
+    ```java
+    buildscript {
+        repositories {
+            ...
+            jcenter()
+        }
+    }
+    ```
+    에 다음 저장소가 있는지 확인하고 없으면 추가한다.
+1. Gradle Scripts > build.gradle(Module: app)을 연 후
+    ```java
+    dependencies{
+        ...
+         implementation 'com.facebook.android:facebook-login:[5,6)'
+
+    }
+    ```
+    섹션에 다음 코드를 추가하여 최신 버전의 Facebook 로그인 SDK를 사용한다.
+1. /app/res/values/strings.xml
+    ```java
+    <string name="facebook_app_id">2302566866461753</string>
+    <string name="fb_login_protocol_scheme">fb2302566866461753</string>
+    ```
+1. /app/manifest/AndroidManifest.xml
+    ```java
+    <application>
+        ...
+       <meta-data
+            android:name="com.facebook.sdk.ApplicationId" 
+            android:value="@string/facebook_app_id"/>
+        <activity 
+            android:name="com.facebook.FacebookActivity" 
+            android:configChanges= "keyboard|keyboardHidden|screenLayout|screenSize|orientation" 
+            android:label="@string/app_name" /> 
+        <activity 
+            android:name="com.facebook.CustomTabActivity" 
+            android:exported="true">  
+            <intent-filter> 
+                <action android:name="android.intent.action.VIEW" />
+                    <category android:name="android.intent.category.DEFAULT" />
+                    <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="@string/fb_login_protocol_scheme" />
+            </intent-filter>
+        </activity>
+    </application>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    ```
+1. LoginActivity
+    ```java
+    printKeyHash();
+
+            AccessToken accessToken = AccessToken.getCurrentAccessToken();
+            boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
+
+            callbackManager = CallbackManager.Factory.create();
+
+            LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
+            loginButton.setReadPermissions("email");
+            loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+                @Override
+                public void onSuccess(LoginResult loginResult) {
+                    GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+                        @Override
+                        public void onCompleted(JSONObject object, GraphResponse response) {
+                            Log.d("response", response.toString());
+
+                            try{
+                                String email = object.getString("email");
+                                String name = object.getString("name");
+                                String gender = object.getString("gender");
+
+                                Log.d("TAG", "페이스북 이메일→"+email);
+                                Log.d("TAG", "페이스북 이름→"+name);
+                                Log.d("TAG", "페이스북 성별→"+gender);
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
+                    Bundle parameters = new Bundle();
+                    parameters.putString("fields", "id,name,email,gender,birthday");
+                    request.setParameters(parameters);
+                    request.executeAsync();
+
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
+    ```
+1. activity_login.xml
+    ```java
+    <com.facebook.login.widget.LoginButton
+    android:id="@+id/login_button"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:layout_marginTop="30dp"
+    android:layout_marginBottom="30dp" /> 
+    ```
+1. LoginActivity
+    ```java
+    public class LoginActivity extends AppCompatActivity {
+
+        ...
+        private LoginButton loginButton;
+        private CircleImageView circleImageView;
+        private CallbackManager callbackManager;
+        public static String first_name, last_name, email, id, image_url;
+
+         @Override
+        protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        ...
+
+        printKeyHash();
+
+        loginButton = findViewById(R.id.login_button);
+
+        callbackManager = CallbackManager.Factory.create();
+        loginButton.setReadPermissions(Arrays.asList("email", "public_profile"));
+        checkLoginStatus();
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                facebook_status = "1";
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+
+            }
+        });
+    }
+    ```
+<br>
 
 <!--facebook 로그인 연동 -->
 # facebook 로그인 연동
