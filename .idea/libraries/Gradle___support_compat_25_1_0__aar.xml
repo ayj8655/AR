@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: :support-compat-25.1.0:@aar">
+    <ANNOTATIONS>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/support-compat-25.1.0.aar/d62ee83ad0691434b9f420d19a5f9e43/annotations.zip!/" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/support-compat-25.1.0.aar/d62ee83ad0691434b9f420d19a5f9e43/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/support-compat-25.1.0.aar/d62ee83ad0691434b9f420d19a5f9e43/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: :com.mapbox.android.unity-debug:@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/com.mapbox.android.unity-debug.aar/8546ccaef1e7a2493bafaf6cb36f25a5/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/com.mapbox.android.unity-debug.aar/8546ccaef1e7a2493bafaf6cb36f25a5/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

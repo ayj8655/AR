@@ -1,5 +1,20 @@
 apply plugin: 'com.android.application'
 
+
+
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.2.0'
+    }
+}
+
+
 android {
     compileSdkVersion 28
 
@@ -26,11 +41,30 @@ android {
         }
     }
 
+    aaptOptions {
+        noCompress = ['.unity3d', '.ress', '.resource', '.obb']
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    bundle {
+        language {
+            enableSplit = false
+        }
+        density {
+            enableSplit = false
+        }
+        abi {
+            enableSplit = true
+        }
+    }
+    packagingOptions {
+        doNotStrip '*/armeabi-v7a/*.so'
+        doNotStrip '*/x86/*.so'
+    }
 
 }
 
@@ -65,12 +99,29 @@ dependencies {
     implementation 'com.google.android.libraries.places:places:1.0.0'
     implementation 'com.android.support:cardview-v7:28.0.0'
 
-    implementation(name: 'VuforiaWrapper', ext: 'aar')
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    //implementation(name: 'animated-vector-drawable-25.1.0', ext:'aar')
+   // implementation(name: 'appcompat-v7-25.1.0', ext:'aar')
+    implementation(name: 'arcore_client', ext:'aar')
+    implementation(name: 'com.mapbox.android.unity-debug', ext:'aar')
+    implementation(name: 'google_ar_required', ext:'aar')
+    implementation(name: 'mapbox-android-telemetry-2-1-0', ext:'aar')
+   // implementation(name: 'support-compat-25.1.0', ext:'aar')
+    //implementation(name: 'support-core-ui-25.1.0', ext:'aar')
+   // implementation(name: 'support-core-utils-25.1.0', ext:'aar')
+   // implementation(name: 'support-media-compat-25.1.0', ext:'aar')
+    //implementation(name: 'support-v4-25.1.0', ext:'aar')
+    implementation(name: 'unityandroidpermissions', ext:'aar')
+    implementation(name: 'unitygar', ext:'aar')
+
+
 }
 
 
 allprojects {
     repositories {
+        google()
+        jcenter()
         flatDir {
             dirs 'libs'
         }
