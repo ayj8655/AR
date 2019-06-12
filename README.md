@@ -1,5 +1,3 @@
-# Guide Dog AR Project
-안드로이드 
 <!-- 목차 -->
 # 목차
 * 어플 소개
@@ -636,21 +634,7 @@ implementation 'com.mapbox.mapboxsdk:mapbox-android-core:1.3.0'
 
 MainActivity.java
 ```java
-// Classes needed to handle location permissions 
-import com.mapbox.android.core.permissions.PermissionsListener;
-import com.mapbox.android.core.permissions.PermissionsManager;
-import java.util.List;
-
-// Variables needed to handle location permissions 
 private PermissionsManager permissionsManager;
-
-
-/**
-* Initialize the Maps SDK's LocationComponent
-*/
-@SuppressWarnings( {"MissingPermission"})
-private void enableLocationComponent(@NonNull Style loadedMapStyle) {}
-
 ```
 권한 요청시 자세한 설명을 위한 문자열 추가합니다. <br>
 string.xml
@@ -974,15 +958,74 @@ NavigationLauncherOptions options = NavigationLauncherOptions.builder()
                 //네비게이션 실행 (MainActivity에서)
 
 
+```
+3. 그 외
+```java
+mapboxMap.setStyle(Style.MAPBOX_STREETS);
+//DARK, LIGHT, OUTDOORS, SATELLITE, SATELLITE_STREETS 등등의 맵 스타일
 
-3. 다
+public void showDialog2(View _view) //검색시 다이얼로그 띄우기
+//이를 통해 길찾기 및 네비게이션 방법 변경
+    {
+        final CharSequence[] oItems = {"도보", "자전거", "자동차"};
+        AlertDialog.Builder oDialog = new AlertDialog.Builder(this,
+                android.R.style.Theme_DeviceDefault_Light_Dialog_Alert);
+        oDialog.setTitle("방법을 선택하세요")
+                .setItems(oItems, new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                         if (which == 0 ) {
+                             //도보 길찾기 진행
+                             getPointFromGeoCoder(editText.getText().toString());
+                             Point origin = Point.fromLngLat(Lo,La);
+                             Point destination = Point.fromLngLat(destinationX, destinationY);
+                             getRoute_walking(origin,destination);//예상 시간 및 위도 경도 출력
+                             getRoute_navi_walking(origin,destination);//네비게이션 정보 저장
+                             startButton.setEnabled(true);
+                         } else if ( which == 1) {
+                            //자전거 길찾기 진행
+                             getPointFromGeoCoder(editText.getText().toString());
+                             Point origin = Point.fromLngLat(Lo,La);
+                             Point destination = Point.fromLngLat(destinationX, destinationY);
+                             getRoute_CYCLING(origin,destination);//예상 시간 및 위도 경도 출력
+                             getRoute_navi_CYCLING(origin,destination);//네비게이션 정보 저장
+                             startButton.setEnabled(true);
+                         } else if (which == 2) {
+                             //자동차 길찾기 진행
+                             getPointFromGeoCoder(editText.getText().toString());
+                             Point origin = Point.fromLngLat(Lo,La);
+                             Point destination = Point.fromLngLat(destinationX, destinationY);
+                             getRoute_DRIVING(origin,destination);//예상 시간 및 위도 경도 출력
+                             getRoute_navi_DRIVING(origin,destination);//네비게이션 정보 저장
+                             startButton.setEnabled(true);
+                         } else {
+                             Toast.makeText(getApplicationContext(), "오류 발생", Toast.LENGTH_LONG).show();
+                         }
+                        Toast.makeText(getApplicationContext(), oItems[which], Toast.LENGTH_LONG).show();
+                    }
+                })
+                .setCancelable(false) //뒤로가기로 취소 막기
+                .show();
+    }
 
+        // 목적지 주소값을 통해 목적지 위도 경도를 얻어오는 구문
+    public void getPointFromGeoCoder(String destinationxy) {
+        Log.e(TAG,"지오코더 실행");
+        Geocoder geocoder = new Geocoder(this);
+        List<Address> listAddress = null;
+        try {
+            listAddress = geocoder.getFromLocationName(destinationxy, 1);
+            destinationX = listAddress.get(0).getLongitude();
+            destinationY = listAddress.get(0).getLatitude();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
+```
 
-<!-- 테마 변경 -->
-# 테마 변경
-메뉴 바에 **테마 변경**을 클릭하면 총 6가지의 테마가 나와 사용자의 마음대로 변경할 수 있다.<br><br>
-![테마 변경](http://cfile269.uf.daum.net/image/99D9F84F5CFA2E012EB2CE)<br><br>
 
 
 
