@@ -1,7 +1,6 @@
 <!-- 목차 -->
 # 목차
 * 어플 소개
-* 차별점
 * Splash Activity 
 * 데이터 베이스
     * 데이터 베이스 생성
@@ -24,6 +23,7 @@
     * 사용법
     * 안드로이드 연동
     * mapbox AR
+* 개선 방안
 <br>
 
 <!-- 어플 소개 -->
@@ -34,11 +34,8 @@ GUIDE DOG은 **증강현실**을 이용한 **길찾기** 애플리케이션으�
 방향 감각이 없는 사람들은 길을 찾는 데 어려움을 겪는다.<br>
 이러한 점을 개선하기 위해 증강현실을 이용하여 직관적인 안내로 손쉽게 목적지를 도착하는 애플리케이션을 만들었다.<br>
 2차원 공간상의 다양한 지리정보를 3차원 데이터로 표현하여 현실적으로 전달한다.<br>
-<!-- 차별점 -->
-# 차별점
-* 
 
-<br>
+https://www.youtube.com/watch?v=DzsKaBSWVgU
 
 <!-- splash Activity -->
 # Splash Activity
@@ -323,6 +320,159 @@ session 등록은 session에 저장된 id 와 password값이 null이면서 nonMe
 ```java
 if(loginActivity.loginId == null && loginActivity.loginPwd == null && loginActivity.nonMember == 0)
 ```
+<br>
+
+<!--facebook 로그인 연동 -->
+# facebook 로그인 API
+## facebook API
+1. Facebook for Developers https://developers.facebook.com/
+1. 로그인 Login
+1. 내 앱>새 앱 추가>...>문서>비즈니스 도구-Facebook Login>안드로이드<br>
+My Apps>Add New App>...>Docs>Business Tools-Facebook Login>Android
+#### Facebook SDK 통합  Integrate the Facebook SDK
+1. Android Studio> Gradle Scripts> build.gradle(Project)를 연 후
+    ```java
+    buildscript {
+        repositories {
+            ...
+            jcenter()
+        }
+    }
+    ```
+    에 다음 저장소가 있는지 확인하고 없으면 추가한다.
+1. Gradle Scripts > build.gradle(Module: app)을 연 후
+    ```java
+    dependencies{
+        ...
+         implementation 'com.facebook.android:facebook-login:[5,6)'
+
+    }
+    ```
+    섹션에 다음 코드를 추가하여 최신 버전의 Facebook 로그인 SDK를 사용한다.
+1. /app/res/values/strings.xml
+    ```java
+    <string name="facebook_app_id">2302566866461753</string>
+    <string name="fb_login_protocol_scheme">fb2302566866461753</string>
+    ```
+1. /app/manifest/AndroidManifest.xml
+    ```java
+    <application>
+        ...
+       <meta-data
+            android:name="com.facebook.sdk.ApplicationId" 
+            android:value="@string/facebook_app_id"/>
+        <activity 
+            android:name="com.facebook.FacebookActivity" 
+            android:configChanges= "keyboard|keyboardHidden|screenLayout|screenSize|orientation" 
+            android:label="@string/app_name" /> 
+        <activity 
+            android:name="com.facebook.CustomTabActivity" 
+            android:exported="true">  
+            <intent-filter> 
+                <action android:name="android.intent.action.VIEW" />
+                    <category android:name="android.intent.category.DEFAULT" />
+                    <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="@string/fb_login_protocol_scheme" />
+            </intent-filter>
+        </activity>
+    </application>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    ```
+1. LoginActivity
+    ```java
+    printKeyHash();
+
+            AccessToken accessToken = AccessToken.getCurrentAccessToken();
+            boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
+
+            callbackManager = CallbackManager.Factory.create();
+
+            LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
+            loginButton.setReadPermissions("email");
+            loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+                @Override
+                public void onSuccess(LoginResult loginResult) {
+                    GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+                        @Override
+                        public void onCompleted(JSONObject object, GraphResponse response) {
+                            Log.d("response", response.toString());
+
+                            try{
+                                String email = object.getString("email");
+                                String name = object.getString("name");
+                                String gender = object.getString("gender");
+
+                                Log.d("TAG", "페이스북 이메일→"+email);
+                                Log.d("TAG", "페이스북 이름→"+name);
+                                Log.d("TAG", "페이스북 성별→"+gender);
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
+                    Bundle parameters = new Bundle();
+                    parameters.putString("fields", "id,name,email,gender,birthday");
+                    request.setParameters(parameters);
+                    request.executeAsync();
+
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
+    ```
+1. activity_login.xml
+    ```java
+    <com.facebook.login.widget.LoginButton
+    android:id="@+id/login_button"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:layout_marginTop="30dp"
+    android:layout_marginBottom="30dp" /> 
+    ```
+1. LoginActivity
+    ```java
+    public class LoginActivity extends AppCompatActivity {
+
+        ...
+        private LoginButton loginButton;
+        private CircleImageView circleImageView;
+        private CallbackManager callbackManager;
+        public static String first_name, last_name, email, id, image_url;
+
+         @Override
+        protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        ...
+
+        printKeyHash();
+
+        loginButton = findViewById(R.id.login_button);
+
+        callbackManager = CallbackManager.Factory.create();
+        loginButton.setReadPermissions(Arrays.asList("email", "public_profile"));
+        checkLoginStatus();
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                facebook_status = "1";
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+
+            }
+        });
+    }
+    ```
+<br>
 
 <!--facebook 로그인 연동 -->
 # facebook 로그인 연동
@@ -518,7 +668,9 @@ mapbox 지도를 사용하기 위해 필요한 작업
 
 1. 맵 박스 계정 및 액세스 토큰, 안드로이드 스튜디오, 안드로이드 기기 또는 가상 기기, 사용 가능 최소 SDK 레벨 14 (IceCreamSandwich)
 
-2. 지도를 포함하려는 액티비티의 java 파일을 열고 아래 코드를 추가합니다. MainActivity.java
+2. 지도를 포함하려는 액티비티의 java 파일을 열고 아래 코드를 추가합니다. 
+
+MainActivity.java
 ```java
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -1024,10 +1176,23 @@ public void showDialog2(View _view) //검색시 다이얼로그 띄우기
         }
     }
 
+
+CameraPosition position = new CameraPosition.Builder()
+                        .target(new LatLng(La, Lo)) // Sets the new camera position
+                        .zoom(13) // Sets the zoom , 줌 정도 숫자가 클수록 더많이 줌함
+                        .bearing(180) // Rotate the camera , 카메라 방향(북쪽이 0) 북쪽부터 시계방향으로 측정
+                        .tilt(0) // Set the camera tilt , 각도
+                        .build(); // Creates a CameraPosition from the builder
+
+                //https://docs.mapbox.com/android/maps/overview/camera/
+
+                //카메라 움직이기
+                mapboxMap.animateCamera(CameraUpdateFactory
+                        .newCameraPosition(position), 7000);
 ```
 
 
-
+참고 : https://docs.mapbox.com/help/tutorials/android-navigation-sdk/
 
 <!-- 장소 자동완성 -->
 # 장소 자동완성
@@ -1199,7 +1364,7 @@ public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 login 화면 제일 상단에 있는 한국어와 영어 버튼을 클릭하면 애플리케이션의 언어가 각각 한국어와 영어로 변경 된다.<br><br>
 ![한국어 영어 버튼](http://cfile258.uf.daum.net/image/99206D375CFB5D100CA164)<br><br>
 언어를 설정 하는 방법은 다음과 같다<br><br>
-1. Android Studio에 Valus파일에서 마우스 오른쪽 버튼을 클릭하여 새 resource file을 생성한다.<br><br>
+1. Android Studio에 Values파일에서 마우스 오른쪽 버튼을 클릭하여 새 resource file을 생성한다.<br><br>
 ![새 리소스 파일 생성](http://cfile258.uf.daum.net/image/9949994F5CFB62C01C26D2)<br><br>
 2. File name은 **stirngs.xml**로 해준 뒤 Available qualifiers는 **Locale**을 선택 해 준 뒤 >> 버튼을 클릭한다.<br><br>
 ![Locale](http://cfile296.uf.daum.net/image/99C41F3B5CFB61ED1CA536)<br><br>
@@ -1380,3 +1545,102 @@ Build And Run : Press the play button of the toolbar to see the expected executi
         ...
     }
     ```
+
+
+# Mapbox AR
+
+1. [mapbox Unity SDK](
+https://www.mapbox.com/install/unity/) 설치 페이지로 이동합니다. mapbox-unity-sdk_v2.0.0.unitypackage를 다운로드 합니다.
+
+2. 다운로드한 SDK를 유니티에 import 합니다.
+완료된후 Mapbox Setup 팝업이 뜨고 Acces Token에 자신의 액세스 토큰을 넣습니다.
+
+
+
+![DirectionsFactory](https://postfiles.pstatic.net/MjAxOTA2MTJfNTYg/MDAxNTYwMzE0OTU5Mjg3.NG2gsxs9bGwN4W107AQEdzJRFgBy9qRqiexKzXOQUdgg.XimdrkwqaPijrhqBAuEa0gptRWlk5Im3RIIH7rR52cEg.JPEG.ayj8655/KakaoTalk_20190612_134851572.jpg?type=w773)
+
+실행 화면
+
+
+![DirectionsFactory](https://postfiles.pstatic.net/MjAxOTA2MTJfMTAz/MDAxNTYwMzE0NTExMjA2.vaQPBObiHbSvUb5bzdrIxkeATDbnpN9_dKUCcWJVfSQg.sov4zeqR_VqY2iBd4ELJI-ZzLqb5fHtaaK9Dg8cS7h4g.PNG.ayj8655/%EC%94%AC%EB%A9%94%EB%89%B4.PNG?type=w773)
+
+
+Ar_Dog 씬 화면
+
+
+![Syncronazy](https://postfiles.pstatic.net/MjAxOTA2MTJfMjIw/MDAxNTYwMzE0NTExMjE0.YjqaR-V2xBrw0_pxMNJdx1SFgfm73I-LgmsQsO_6AoAg.JSj_hmcdPZNCm4DAOa4zlRqnUa9JEjILIos0cIbjSwog.PNG.ayj8655/Syncronization.PNG?type=w773)
+
+2D 지도를 현실과 매핑 시켜주는 오브젝트
+
+
+
+ForWardGeocoderExample.cs
+```c#
+void SearchLocation_OnGeocoderResponse(ForwardGeocodeResponse response)
+        {
+            _resultsText.text = JsonConvert.SerializeObject(_searchLocation.Response, Formatting.Indented, JsonConverters.Converters);
+            Debug.Log(_resultsText.text);
+
+            JObject json = JObject.Parse(_resultsText.text);
+
+            string center = json["features"][0]["center"].ToString();
+
+            Debug.Log(center);
+            
+            string[] result = center.Split(new char[] { ',' });
+            
+            string Long = result[0];
+            string Lati = result[1];
+
+            Long = Long.Replace("[", "");
+            Long = Long.Replace(" ", "");
+            Long = Long.Replace("\r\n", "");
+            
+            Lati = Lati.Replace("]", "");
+            Lati = Lati.Replace(" ", "");
+            Lati = Lati.Replace("\r\n", "");
+
+            Direction2 direction2 = GameObject.Find("Waypoint#1").GetComponent<Direction2>();
+
+            direction2.lat = Convert.ToDouble(Lati);
+            direction2.lng = Convert.ToDouble(Long);
+            Debug.Log(Long);
+            Debug.Log(Lati);
+           
+    
+        }
+```
+![json](https://postfiles.pstatic.net/MjAxOTA2MTJfMTEg/MDAxNTYwMzE2Mjg0NTY1.b7DWPG6ew9D9rOFKaFIHxaoRax5YxWa6iz382CYHEVYg.7hbzodBRcURX7via49MhDwdafTf3Jm8K_02yXmINxCMg.PNG.ayj8655/json.PNG?type=w773)
+
+
+json오브젝트
+
+![DirectionsFactory](https://postfiles.pstatic.net/MjAxOTA2MTJfMjQ5/MDAxNTYwMzE0NTExMjEy.kQ_aPbFK8bkKLjSjAyi4UjDbfn2aVs76Vn7qAwcpXZwg.GuWLjRdV6DpwO_KnbjPb4VYIRGC0emO-gTOJFAxl-Qwg.PNG.ayj8655/directions.PNG?type=w773
+)
+
+DirectionsFactory
+```c#
+void Query()
+		{
+			var count = _waypoints.Length;
+			var wp = new Vector2d[count];
+
+            for (int i = 0; i < count; i++)
+            {
+                wp[i] = _waypoints[i].GetGeoPosition(_map.CenterMercator, _map.WorldRelativeScale);
+            }
+            var _directionResource = new DirectionResource(wp, RoutingProfile.Walking);
+			_directionResource.Steps = true;
+			_directions.Query(_directionResource, HandleDirectionsResponse);
+        }
+```
+
+
+
+
+
+<!--개선방안-->
+# 개선 방안    
+1. 길이 위에 나타나므로 땅으로 내리는 작업을 해야한다. 
+2. mapbox 지도와 매핑률이 낮으므로 싱크를 맞추는 작업을 해야한다. 
+3. 실내에서 어플을 실행 했을 때 GPS가 정확하게 잡히지 않는다.
