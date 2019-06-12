@@ -1635,35 +1635,6 @@ void Query()
         }
 ```
 
-Direction2.cs
-```c#
-using UnityEngine;
-using Mapbox.Unity.Map;
-using Mapbox.Unity.Utilities;
-
-public class Direction2 : MonoBehaviour
-{
-    public double lat, lng;
-   
-
-    [SerializeField]
-    AbstractMap _map;
-
-    public Transform waypoint;
-
-    void Update()
-    {
-        moveWaypointToGeoLocation(waypoint);
-    }
-
-
-    void moveWaypointToGeoLocation(Transform waypoint)
-    {
-        waypoint.MoveToGeocoordinate(lat, lng, _map.CenterMercator, _map.WorldRelativeScale);
-    }
-}
-```
-
 
 
 
