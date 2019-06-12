@@ -40,4 +40,6 @@
     <string name="EXIT">종료</string>
     <string name="startButton">START NAVIGATION</string>
     <string name="btnStartLoc">내 위치</string>
+    <string name="btnAdd">즐겨찾기 등록</string>
+    <string name="btnDelete">즐겨찾기 삭제</string>
 </resources>

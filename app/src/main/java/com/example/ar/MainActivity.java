@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Point originPosition;
     private Point destinatonPosition;
     private Marker destinationMarker;
-    private Button startButton;
+    private Button startButton, arButton;
     private NavigationMapRoute navigationMapRoute;
     private NavigationRoute navigationRoute;
     public static DirectionsRoute currentRoute;
@@ -140,7 +140,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //bookMark
     static BookMarkList bookMarkList;
-    static Button a_d;
+    static Button btn_add;
+    static Button btn_delete;
     static String user_id, place_mark, type, buttonState;
 
     //STT
@@ -162,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         startButton = findViewById(R.id.startButton);
+        arButton = findViewById(R.id.arButton);
         editText =(EditText)findViewById(R.id.txtDestination);
         Button search_Button= findViewById(R.id.btnStartLoc);
 
@@ -333,7 +335,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
-                a_d.setText("즐겨찾기 등록");
+                btn_delete.setEnabled(false);
+                btn_add.setEnabled(true);
+                //a_d.setText("즐겨찾기 등록");
                 buttonState = "add";
 
                 // TODO: Get info about the selected place.
@@ -371,7 +375,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //bookMark
         //userid = (TextView)findViewById(R.id.userid);
         //place = (EditText)findViewById(R.id.place);
-        a_d = (Button)findViewById(R.id.btn_add_delete);
+        btn_add = (Button)findViewById(R.id.btn_add);
+        btn_delete = (Button)findViewById(R.id.btn_delete);
+
+        if(loginActivity.nonMember == 1){
+            btn_add.setEnabled(false);
+            btn_delete.setEnabled(false);
+        }
+        else{
+            btn_add.setEnabled(true);
+            btn_delete.setEnabled(true);
+        }
 
         bookMarkList.list.clear();
 
@@ -389,6 +403,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 editText.setText(result.get(0));
                 STT.setText(result.get(0));
                 startButton.setEnabled(true);
+                arButton.setEnabled(true);
                 getPointFromGeoCoder(editText.getText().toString());
                 Point origin = Point.fromLngLat(Lo,La);
                 Point destination = Point.fromLngLat(destinationX, destinationY);
@@ -441,6 +456,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             getRoute_navi_walking(origin,destination);//네비게이션 정보 저장
 
                             startButton.setEnabled(true);
+                            arButton.setEnabled(true);
 
                         } else if ( which == 1) {
                             //자전거 길찾기 진행
@@ -451,6 +467,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             getRoute_navi_CYCLING(origin,destination);//네비게이션 정보 저장
 
                             startButton.setEnabled(true);
+                            arButton.setEnabled(true);
 
                         } else if (which == 2) {
                             //자동차 길찾기 진행
@@ -461,7 +478,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             getRoute_navi_DRIVING(origin,destination);//네비게이션 정보 저장
 
                             startButton.setEnabled(true);
-
+                            arButton.setEnabled(true);
                         } else {
                             Toast.makeText(getApplicationContext(), "오류 발생", Toast.LENGTH_LONG).show();
                         }
@@ -570,8 +587,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         place_mark = txtView.getText().toString();
         type = "bookmark";
 
+        buttonState = "add";
         BackgroundWorker backgroundWorker = new BackgroundWorker(this);
         backgroundWorker.execute(type, user_id, place_mark, buttonState);
+    }
+
+    public void onMark2(View view) {
+        place_mark = txtView.getText().toString();
+        type = "bookmark";
+
+        buttonState = "delete";
+        BackgroundWorker backgroundWorker = new BackgroundWorker(this);
+        backgroundWorker.execute(type, user_id, place_mark, buttonState);
+    }
+
+    public void onClickAR(View view) {
+        Intent intent = new Intent(getApplicationContext(), UnityPlayerActivity.class);
+        startActivity(intent);
+        //유니티 플레이어 액티비티 실행
     }
     //
 
@@ -945,6 +978,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         getRoute_walking(originPosition, destinatonPosition);   //도보 길찾기
         getRoute_navi_walking(originPosition, destinatonPosition);//도보 네비게이션
         startButton.setEnabled(true);   //네비게이션 버튼 활성화
+        arButton.setEnabled(true);
 
 
         return false;

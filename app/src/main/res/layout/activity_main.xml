@@ -46,20 +46,38 @@
             android:id="@+id/startButton"
             android:layout_width="175dp"
             android:layout_height="56dp"
-            android:layout_marginStart="120dp"
-            android:layout_marginTop="536dp"
+            android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:background="@drawable/button_background"
             android:enabled="false"
             android:text="@string/startButton"
-            app:layout_constraintBottom_toBottomOf="@+id/mapView"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.008"
-            app:layout_constraintVertical_bias="0.007"
+            app:layout_constraintHorizontal_bias="0.036"
+            app:layout_constraintVertical_bias="0.811"
             mapbox:layout_constraintStart_toStartOf="parent"
             mapbox:layout_constraintTop_toTopOf="parent" />
 
+        <Button
+            android:id="@+id/arButton"
+            android:layout_width="178dp"
+            android:layout_height="58dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/button_background"
+            android:enabled="false"
+            android:onClick="onClickAR"
+            android:text="START AR"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/mapView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/startButton"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.81" />
 
         <FrameLayout
             android:id="@+id/fragment_container"
@@ -130,8 +148,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/btnSearch"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
-            />
+            app:layout_constraintVertical_bias="0.0" />
 
         <com.mapbox.mapboxsdk.maps.MapView
             android:id="@+id/mapView"
@@ -153,14 +170,26 @@
         </com.mapbox.mapboxsdk.maps.MapView>
 
         <Button
-            android:id="@+id/btn_add_delete"
+            android:id="@+id/btn_delete"
+            android:layout_width="65dp"
+            android:layout_height="56dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/button_background"
+            android:onClick="onMark2"
+            android:text="@string/btnDelete"
+            mapbox:layout_constraintStart_toStartOf="parent"
+            mapbox:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/btn_add"
             android:layout_width="65dp"
             android:layout_height="56dp"
             android:layout_marginStart="4dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/button_background"
             android:onClick="onMark"
-            android:text="즐겨찾기 등록"
+            android:text="@string/btnAdd"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

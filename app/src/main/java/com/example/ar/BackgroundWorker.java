@@ -307,8 +307,9 @@ public class BackgroundWorker extends AsyncTask<String,Void,String> {
             alertDialog.show();
             if(index.equals("bookmark_delete")){
 
-                mainActivity.a_d.setText("즐겨찾기 등록");
-                mainActivity.buttonState = "add";
+                //mainActivity.a_d.setText("즐겨찾기 등록");
+                mainActivity.btn_delete.setEnabled(false);
+                mainActivity.btn_add.setEnabled(true);
                 mainActivity.bookMarkList.ListView = 0;
             }
         }else if(index.equals("callList")){

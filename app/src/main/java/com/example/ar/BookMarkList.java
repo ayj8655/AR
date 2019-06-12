@@ -37,6 +37,8 @@ public class BookMarkList extends AppCompatActivity {
         list3 = new ArrayList<String>(list2); //중복이 제거된 HachSet을 다시 ArrayList에 삽입
 
 
+
+
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, list3) ;
 
         ListView listview = (ListView) findViewById(R.id.listview1) ;
@@ -52,8 +54,9 @@ public class BookMarkList extends AppCompatActivity {
 
                 mainActivity.STT.setText(mainActivity.bookMarkList.getListViewString);
                 mainActivity.txtView.setText(mainActivity.bookMarkList.getListViewString);
-                mainActivity.a_d.setText("즐겨찾기 삭제");
-                mainActivity.buttonState = "delete";
+                //mainActivity.a_d.setText("즐겨찾기 삭제");
+                mainActivity.btn_add.setEnabled(false);
+                mainActivity.btn_delete.setEnabled(true);
                 mainActivity.bookMarkList.ListView = 0;
                 finish();
             }

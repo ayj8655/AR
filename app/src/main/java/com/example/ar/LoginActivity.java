@@ -107,6 +107,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         loginName = auto.getString("inputName", null);
         loginTeg = auto.getString("inputTeg", null);
 
+        nonMember = 0;
      /*   if(facebook_login == 0){
             mainActivity.facebook_login = 0;
         }*/

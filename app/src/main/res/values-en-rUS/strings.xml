@@ -41,5 +41,7 @@
     <string name="EXIT">EXIT</string>
     <string name="startButton">START NAVIGATION</string>
     <string name="btnStartLoc">Current Location</string>
+    <string name="btnAdd">ADD BookMark</string>
+    <string name="btnDelete">Delete BookMark</string>
 
 </resources>
