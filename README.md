@@ -37,6 +37,10 @@ GUIDE DOG은 **증강현실**을 이용한 **길찾기** 애플리케이션으�
 
 https://www.youtube.com/watch?v=DzsKaBSWVgU
 
+
+AR 기능 : AR코어 지원기기만 사용 가능
+그외 기능 : api 14 이상 가능
+
 <!-- splash Activity -->
 # Splash Activity
 Splash 화면은 애플리케이션을 켰을 때 **맨 처음** 보여지는 화면으로 1초동안 보여진 후 LoginActivity로 전환 되면서 Login화면이 보여지고 Splash 화면은 종료 된다.<br>
