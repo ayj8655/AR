@@ -1638,13 +1638,3 @@ void Query()
 			_directions.Query(_directionResource, HandleDirectionsResponse);
         }
 ```
-
-
-
-
-
-<!--개선방안-->
-# 개선 방안    
-1. 길이 위에 나타나므로 땅으로 내리는 작업을 해야한다. 
-2. mapbox 지도와 매핑률이 낮으므로 싱크를 맞추는 작업을 해야한다. 
-3. 실내에서 어플을 실행 했을 때 GPS가 정확하게 잡히지 않는다.
